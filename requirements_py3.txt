@@ -1,0 +1,2 @@
+# dependancies only for Python 3
+git+https://github.com/surfly/gevent.git#egg=gevent
