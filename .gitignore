@@ -10,6 +10,7 @@ __pycache__
 *.pyo
 *~
 .coverage
+.cache
 
 ########################################
 # OS X temporary files that should never be committed
