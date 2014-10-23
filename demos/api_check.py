@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Shows current Relayr API status on the command-line.
+Shows current Relayr API key figures on the command-line.
 
 This script uses the Python bindings for the Relayr RESTful API as defined
 in the ``relayr`` Python package. It should work as-is on Python 2 and 3.
@@ -11,22 +11,31 @@ Example:
 
 $ python api_check.py 
 Relayr API-Check
-................................................................................
+.........................................................................................
+Path: demos/api_check.py
+MD5 hash: b40466733b9a807572aeccb8d13bf059
 API: https://api.relayr.io
-Python client version: 0.1.1
+Python Relayr client version: 0.1.1
 Python version: CPython 2.7.6
-Date/Time: 2014-09-24T10:45:50.419279
-................................................................................
-server status ok: True (0.81 s)
-140 publishers (0.35 s)
-146 applications (0.44 s)
-35 public devices (0.31 s)
-6 device models (0.29 s)
-8 device model meanings (0.31 s)
-#public devices by meaning: {"acceleration": 7, "temperature": 9, \
-"noise_level": 5, "angular_speed": 7, "color": 8, "luminosity": 8, \
-"proximity": 8, "humidity": 9}
-
+Platform: Darwin-10.8.0-i386-64bit
+Date/Time: 2014-10-15T14:13:51.480319
+.........................................................................................
+server status ok: True (1.02 s)
+317 publishers (0.64 s)
+199 applications (0.74 s)
+109 public devices (0.87 s)
+8 device models (0.42 s)
+8 device model meanings (0.47 s)
+#public devices by meaning: {
+    "acceleration": 17,
+    "temperature": 33,
+    "noise_level": 18,
+    "angular_speed": 17,
+    "color": 28,
+    "luminosity": 28,
+    "proximity": 28,
+    "humidity": 33
+}
 """
 
 import sys
@@ -34,16 +43,12 @@ import json
 import time
 import datetime
 import platform
-try:
-    from urllib import urlopen
-    from urllib2 import URLError
-except ImportError:
-    from urllib.request import urlopen
-    from urllib.error import URLError
+from hashlib import md5
 
 import termcolor
 
-from relayr import core
+from relayr import RelayrAPI
+from relayr.compat import urlopen, URLError
 from relayr.version import __version__ as relayr_version
 from relayr.utils.terminalsize import get_terminal_size
 
@@ -53,7 +58,7 @@ def connected_to_internet():
 
     try:
         # Give IP address to avoid potential DNS issues.
-        response=urlopen('http://74.125.228.100')
+        response = urlopen('http://74.125.228.100')
         return True
     except URLError as err:
         return False
@@ -62,28 +67,36 @@ def connected_to_internet():
 def show_versions():
     "Show some versioning info."
     
-    # Show header line.
-    url = core.relayrAPI
+    # Show header lines.
+    api = RelayrAPI()
+    url = api.host
     dt = datetime.datetime.now().isoformat()
     term_width = get_terminal_size()[0]
     print('.' * term_width)
+    print('Path: %s' % __file__)
+    hash = md5(open(__file__).read().encode('utf8')).hexdigest()
+    print('MD5 hash: %s' % hash)
     print('API: %s' % url)
-    print('Python client version: %s' % relayr_version)
+    print('Python Relayr client version: %s' % relayr_version)
     pyimpl = platform.python_implementation()
     pyver = platform.python_version()
+    platf = platform.platform()
     print('Python version: %s %s' % (pyimpl, pyver))
+    print('Platform: %s' % platf)
     print('Date/Time: %s' % dt)
     print('.' * term_width)
     
 
 def show_check():
-    "Show some key numbers of the current state of the API."
+    "Show some key numbers about the current state of the API."
     
-    # Get number of all publishers (no credentials needed).
+    # For all this no credentials/token etc. are needed.
+    api = RelayrAPI()
+
+    # Get server status.
     t0 = time.time()
     try:
-        # import pdb; pdb.set_trace();
-        res = core.server_status()
+        res = api.get_server_status()
         ok = res['database'] == 'ok'
     except:
         msg = 'Relayr API not reachable, sorry for that!'
@@ -92,45 +105,44 @@ def show_check():
     t = time.time() - t0
     print('server status ok: %s (%.2f s)' % (ok, t))
 
-    # Get number of all publishers (no credentials needed).
+    # Get number of all publishers.
     t0 = time.time()
-    publishers = core.list_all_publishers()
+    publishers = list(api.get_public_publishers())
     t = time.time() - t0
     print('%d publishers (%.2f s)' % (len(publishers), t))
 
-    # Get number of all apps (no credentials needed).
+    # Get number of all apps.
     t0 = time.time()
-    apps = core.list_all_apps()
+    apps = list(api.get_public_apps())
     t = time.time() - t0
     print('%d applications (%.2f s)' % (len(apps), t))
     
-    # Get number of all public devices (no credentials needed).
+    # Get number of all public devices.
     t0 = time.time()
-    devices = core.list_all_public_devices()
+    devices = list(api.get_public_devices())
     t = time.time() - t0
     print('%d public devices (%.2f s)' % (len(devices), t))
 
-    # Get number of all device models (no credentials needed).
+    # Get number of all device models.
     t0 = time.time()
-    models = core.list_all_device_models()
+    models = list(api.get_public_device_models())
     t = time.time() - t0
     print('%d device models (%.2f s)' % (len(models), t))
 
-    # Get number of all device model meanings (no credentials needed).
+    # Get number of all device model meanings.
     t0 = time.time()
-    meanings = core.list_all_device_model_meanings()
+    meanings = list(api.get_public_device_model_meanings())
     t = time.time() - t0
     print('%d device model meanings (%.2f s)' % (len(meanings), t))
 
-    # Get a count of all public devices by meaning (no credentials needed).
-    devices = core.list_all_public_devices()
+    # Get a count of all public devices by meaning.
     counts = {}
     for device in devices:
         readings = device['model']['readings']
         for reading in readings:
             meaning = m = reading['meaning']
             counts[m] = counts[m] + 1 if counts.get(m, 0) else 1
-    print('#public devices by meaning: %s' % json.dumps(counts))
+    print('#public devices by meaning: %s' % json.dumps(counts, indent=4))
 
 
 if __name__ == "__main__":
