@@ -3,6 +3,8 @@
 
 """
 Tests for accessing Relayr Wunderbar devices via Bluetooth LE.
+
+Some of these test need root permissions, see docstrings below.
 """
 
 import sys
@@ -16,15 +18,15 @@ except NotImplementedError:
     HAVE_BLUETOOTH = False
 
 
-HAVE_BLUEZ = commands.getoutput('which hcitool') != ''
 ON_LINUX = sys.platform.startswith("linux")
+HAVE_BLUEZ = commands.getoutput('which hcitool') != ''
 
 
-class BluetoothTestCase(object):
+@pytest.mark.skipif(not HAVE_BLUETOOTH, reason="requires working bluetooth package")
+@pytest.mark.skipif(not ON_LINUX, reason="requires Linux")
+class TestBluetooth(object):
     "Tests using PyBluez."
 
-    @pytest.mark.skipif(not HAVE_BLUETOOTH, reason="requires working bluetooth package")
-    @pytest.mark.skipif(not ON_LINUX, reason="requires Linux")
     def test_service_discovery(self):
         "Test service (not LE!) discovery."
         try:
@@ -36,7 +38,7 @@ class BluetoothTestCase(object):
 
 
 @pytest.mark.skipif(not ON_LINUX, reason="requires Linux")
-class BleTestCase(object):
+class TestBle(object):
     "Tests for accessing BLE devices via Bluez tools (needs root permissions)."
 
     def test_ble_scan(self):
@@ -45,17 +47,12 @@ class BleTestCase(object):
         devs = scan_ble_devices(timeout=3)
         assert len(devs) > 0
 
-    def test_access_device(self):
+    def test_access_device(self, fix_registered):
         "Test accessing BLE device."
         from relayr.ble import WunderbarGattDevice
-        from config import testset4 as context
-        addr = context['bluetoothAddr']
+        addr = fix_registered.testset4['bluetoothAddr']
         d = WunderbarGattDevice(addr)
         assert len(d.primary()) > 0
         assert len(d.characteristics()) > 0
         assert len(d.char_desc()) > 0
         assert len(d.char_read_hnd(0x0016)) > 0
-
-
-if __name__ == "__main__":
-    unittest.main()
