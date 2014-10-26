@@ -1,10 +1,9 @@
-include AUTHORS
-include Changelog.rst
+include AUTHORS.txt
+include CHANGELOG.txt
 include CONTRIBUTING.md
-include LICENSE
+include LICENSE.txt
 include MANIFEST.in
-include README.rst
-include README
+include README.txt
 include tox.ini
 include setup.py
 include requirements*.txt
