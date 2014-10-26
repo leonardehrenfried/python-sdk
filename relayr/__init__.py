@@ -1,3 +1,5 @@
+from relayr.client import Client, RelayrAPI
+
 
 ## TODO: Install docs folder with default installation.
 def show_docs(url=''):
