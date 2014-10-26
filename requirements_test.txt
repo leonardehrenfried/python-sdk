@@ -1,0 +1,5 @@
+pytest
+pytest-xdist
+pytest-pep8
+pytest-timeout
+pytest-cov

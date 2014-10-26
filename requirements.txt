@@ -3,8 +3,3 @@ jinja2
 PyBluez
 pubnub==3.5.2
 termcolor
-
-pytest
-pytest-xdist
-pytest-pep8
-pytest-timeout
