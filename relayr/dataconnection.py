@@ -3,48 +3,71 @@
 """
 Data Connection
 
-Some initial code to provide connections for different data hubs.
+Some initial code to provide connections for data hub(s).
 """
+
+import time
+import threading
 
 from Pubnub import Pubnub
 
 
-class PubnubDataConnection(object):
-    "..."
+class PubnubDataConnection(threading.Thread):
+    "A connection to a PubNub data hub running in its own thread."
     
-    def __init__(self, **context):
-        "Opens a PubNub connection with credentials from the given context dict."
+    def __init__(self, callback, credentials):
+        """
+        Open a PubNub connection with a callback and a credentials dict.
 
-        self.context = context
+        :param callback: A callable to be called with two arguments: 
+            message_content and channel_name.
+        :type callback: A function or object implementing the ``__call__`` method.
+        :param credentials: A set of key/value pairs to be passed to PubNub.
+        :type credentials: dict
+        """
+
+        super(PubnubDataConnection, self).__init__()
+        self._stop_event = threading.Event()
+        self.callback = callback
+        self.credentials = credentials
+        self.channel = credentials['channel']
 
         self.hub = Pubnub(
-            None, # publish key
-            self.context['subscribeKey'],
-            cipher_key=self.context['cipherKey'],
-            auth_key=self.context['authKey'],
+            publish_key=credentials.get('publishKey', None),
+            subscribe_key=credentials.get('subscribeKey', None),
+            cipher_key=credentials.get('cipherKey', None),
+            auth_key=credentials.get('authKey', None),
             secret_key=None,
             ssl_on=False
         )
-    
+
+        self.setDaemon(True)
+
+    def run(self):
+        """Thread method, called implicitly after starting the thread."""
+
+        self.subscribe(self.channel, self.callback)
+        while not self._stop_event.is_set():
+            time.sleep(1)
+
+    def stop(self):
+        """Mark the connection/thread for being stopped."""
+
+        self._stop_event.set()
+        self.unsubscribe(self.channel)
+
     def subscribe(self, channel_name, callback):
         """
         Subscribe a callable to a channel with given name.
 
-        :param channel_name: the channel name
+        :param channel_name: The channel name.
         :type channel_name: string
-        :param callback: the callable to be called with two arguments: 
+        :param callback: The callable to be called with two arguments: 
             message_content and channel_name.
-        :type callback: function or object implementing the ``__call__`` method.
-        :rtype: ``None``
+        :type callback: A function or object implementing the ``__call__`` method.
         """
         
         self.hub.subscribe(channel_name, callback)
-        # self.hub.timeout(10, callback)
-        import time; time.sleep(10)
-        print "end of waiting"
-        self.hub.unsubscribe(channel_name)
-        print "after unsub"
-        # self.hub.subscribe(channel_name, None)
 
     def unsubscribe(self, channel_name):
         """
@@ -52,7 +75,6 @@ class PubnubDataConnection(object):
 
         :param channel_name: the channel name
         :type channel_name: string
-        :rtype: ``None``
         """
         
         self.hub.unsubscribe(channel_name)
@@ -61,8 +83,8 @@ class PubnubDataConnection(object):
 class MqttDataConnection(object):
     "..."
     
-    def __init__(self, **context):
-        self.context = context
+    def __init__(self, callback, credentials):
+        pass
 
     def subscribe(self, channel_name, callback):
         raise NotImplementedError
