@@ -9,6 +9,8 @@ import sys
 import pytest
 
 
+## TODO: maybe use importlib.import_module
+
 @pytest.fixture(scope='module')
 def fix_anonymous():
     "Return fixture for anonymous API access."
