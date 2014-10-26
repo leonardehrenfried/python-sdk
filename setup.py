@@ -1,24 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import os
-from os.path import join, dirname
-from setuptools import setup
+import sys
+
+from setuptools import setup, Command
+
 
 PY_VERSION = sys.version_info[0]
 
+
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import sys, subprocess
+        errno = subprocess.call([sys.executable, 'runtests.py', 'relayr/tests'])
+        raise SystemExit(errno)
+
+
 exec(open('relayr/version.py').read())
 
-with open('README.rst') as f:
+with open('README.txt') as f:
     long_description = f.read()
 
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
-
-# use external unittest for 2.6
-if sys.version_info[:2] == (2, 6):
-    install_requires.append('unittest2')
 
 if PY_VERSION == 2:
     with open('requirements_py2.txt') as f:
@@ -31,17 +44,16 @@ tests_require = [
 setup(
     name = "relayr",
     description = "Python client for Relayr API",
-    license="MIT",
+    license = "MIT",
     url = "https://github.com/relayr/python-sdk",
     long_description = long_description,
     version = __version__,
     author = "Relayr Team",
     author_email = "team@relayr.io",
-    packages=['relayr', 'relayr.utils', 'relayr.tests'],
-    # package_data={'relayr': ['docs/*']},
-    keywords=['relayr', 'rest', 'api', 'python', 'client', 'iot', 'wunderbar'],
+    packages = ['relayr', 'relayr.utils', 'relayr.tests'],
+    keywords = ['relayr', 'rest', 'api', 'python', 'client', 'iot', 'wunderbar'],
     classifiers = [
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
@@ -58,8 +70,9 @@ setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
     ],
-    install_requires=install_requires,
+    install_requires = install_requires,
 
-    # test_suite='tests.test_api',
-    tests_require=tests_require,
+    # test_suite = 'tests.test_api',
+    tests_require = tests_require,
+    cmdclass = {'test': PyTest},
 )
