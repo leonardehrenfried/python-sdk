@@ -21,7 +21,7 @@ class PyTest(Command):
 
     def run(self):
         import sys, subprocess
-        errno = subprocess.call([sys.executable, 'runtests.py', 'relayr/tests'])
+        errno = subprocess.call([sys.executable, 'runtests.py', 'tests'])
         raise SystemExit(errno)
 
 
@@ -50,7 +50,7 @@ setup(
     version = __version__,
     author = "Relayr Team",
     author_email = "team@relayr.io",
-    packages = ['relayr', 'relayr.utils', 'relayr.tests'],
+    packages = ['relayr', 'relayr.utils'],
     keywords = ['relayr', 'rest', 'api', 'python', 'client', 'iot', 'wunderbar'],
     classifiers = [
         "Development Status :: 3 - Alpha",

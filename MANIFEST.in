@@ -6,10 +6,13 @@ include MANIFEST.in
 include README.txt
 include tox.ini
 include setup.py
+include runtests.py
 include requirements*.txt
+
 recursive-include docs *
-# recursive-include tests *
+recursive-include tests *
 
 prune docs/_build
+
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
