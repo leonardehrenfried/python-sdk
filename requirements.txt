@@ -1,5 +1,5 @@
 requests
-jinja2
 PyBluez
 pubnub==3.5.2
+pycrypto
 termcolor
