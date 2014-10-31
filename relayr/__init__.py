@@ -1,16 +1,15 @@
-from relayr.client import Client, RelayrAPI
+from relayr.client import Client, Api
 
 
-## TODO: Install docs folder with default installation.
 def show_docs(url=''):
-    "Open documentation with the default webbrowser in a new window."
+    "Open online documentation with the default webbrowser in a new window."
 
     import webbrowser
-    url = url or 'file:///<path>/<to>/html/index.html'
+    url = url or 'http://relayr.readthedocs.org/'
     webbrowser.open_new(url)
 
 
-## TODO: Start IPython notebook in the background and open given file.
+## TODO: Start IPython notebook in the background and open given file (?).
 def show_tutorial(path=''):
     "Open IPython notebook with given path."
 

@@ -4,7 +4,7 @@
 
 import platform
 
-from relayr.api import RelayrAPI
+from relayr.api import Api
 from relayr.version import __version__
 from relayr.exceptions import RelayrApiException
 from relayr.resources import User, App, Device, DeviceModel, Transmitter, Publisher
@@ -36,7 +36,7 @@ class Client(object):
         d = devs.next()
         apps = usr.get_apps()
     """
-    def __init__(self, host=None, **kwargs):
+    def __init__(self, host=None, token=None):
         """
         :arg host: the base url for accessing the Relayr RESTful API, default
             is ``https://api.relayr.io``.
@@ -46,15 +46,15 @@ class Client(object):
         """
 
         self.host = host or 'https://api.relayr.io'
+        self.token = token
         self.useragent = _userAgent
-        self.token = kwargs.get('token', '')
         self.headers = {
             'User-Agent': self.useragent,
             'Content-Type': 'application/json'
         }
         if self.token:
             self.headers['Authorization'] = 'Bearer {0}'.format(self.token)
-        self.api = RelayrAPI(host, **kwargs)
+        self.api = Api(host, token=self.token)
 
     def get_public_apps(self):
         """
@@ -135,21 +135,21 @@ class Client(object):
         for dmm in self.api.get_public_device_model_meanings():
             yield dmm
 
-    def get_user(self, **kwargs):
-        """
-        Returns the user belonging to this API client.
-        """
+    def get_user(self):
+        """Returns the user belonging to this API client."""
         info = self.api.get_oauth2_user_info()
         usr = User(info['id'], client=self)
         for k in info:
             setattr(usr, k, info[k])
         return usr
 
-    def get_app(self, **kwargs):
-        """
-        Returns the application belonging to this API client.
-        """
+    def get_app(self):
+        """Returns the application belonging to this API client."""
         info = self.api.get_oauth2_app_info()
         app = App(info['id'], client=self)
         app.get_info()
         return app
+
+    def get_device(self, deviceID):
+        """Returns the device with the given ID."""
+        return Device(deviceID, client=self)

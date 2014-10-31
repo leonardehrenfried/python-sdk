@@ -1,7 +1,7 @@
 """
 Implementation of Relayr's RESTful HTTP API as individual endpoints.
 
-This module contains the RelayrAPI class with one method for each API endpoint.
+This module contains the Api class with one method for each API endpoint.
 All method names start with the HTTP method followed by the resource names used
 in that endpoint e.g. ``post_user_app`` for the endpoint
 ``POST /users/<id>/apps/<id>`` with minor modifications, usually turning plural
@@ -11,9 +11,13 @@ The function ``perform_request`` performs all HTTP requests and raises an
 exception for all unexpected response status codes (!= 2XX).
 """
 
+import os
+import time
 import json
 import platform
 import urllib
+import warnings
+import logging
 
 import requests
 
@@ -22,7 +26,9 @@ from relayr.exceptions import RelayrApiException
 from relayr.compat import urlencode
 
 
-DEBUG = True
+# read config vars from environment (restricted to Booleans)
+DEBUG = True if os.environ.get('RELAYR_DEBUG', 'False') == 'True' else False
+LOG = True if os.environ.get('RELAYR_LOG', 'False') == 'True' else False
 
 _userAgent = 'Python-Relayr-Client/{version} ({plat}; {pyimpl} {pyver})'.format(
     version=__version__,
@@ -32,50 +38,48 @@ _userAgent = 'Python-Relayr-Client/{version} ({plat}; {pyimpl} {pyver})'.format(
 )
 
 
-def perform_request(method, url, data=None, headers=None):
+def create_logger(sender):
+    "Create a logger for the requesting object."
+
+    logger = logging.getLogger('Relayr API Client')
+    logger.setLevel(logging.DEBUG)
+
+    logfile = "{0}/relayr-api-{1}.log".format(os.getcwd(), id(sender))
+    h = logging.FileHandler(logfile)
+    # h = logging.RotatingFileHandler(logfile, 
+    #     mode='a', maxBytes=2**14, backupCount=5, encoding=None, delay=0)
+
+    # h.setLevel(logging.DEBUG)
+
+    # create formatter and add it to the handler(s)
+    fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    formatter = logging.Formatter(fmt, '%Y-%m-%d %H:%M:%S.%f %Z%z')
+    formatter.converter = time.gmtime
+    h.setFormatter(formatter)
+
+    # add the handler(s) to the logger
+    logger.addHandler(h)
+
+    return logger
+
+def build_curl_call(method, url, data=None, headers=None):
     """
-    Perform an API call and return JSON result as Python datastructure.
+    Build and return a ``curl`` command for use on the command-line.
 
-    Query parameters are expected in the ``url`` parameter.
-    For returned status codes other than 2XX an ``RelayrApiException`` is
-    raised that contains the API call (method and URL).
+    (The data parameter is supposed to be already urlencoded...) ## FIXME
     """
 
-    if data is not None:
-        urlencoded_data = urlencode(data)
-        data = json.dumps(data)
-        try:
-            data = data.encode('utf-8')
-        except (UnicodeDecodeError, AttributeError):
-            # bytes/str - no need to re-encode
-            pass
+    command = "curl -X {0} {1}".format(method.upper(), url)
+    if headers:
+        for k, v in headers.items():
+            command += ' -H "{0}: {1}"'.format(k, v)
+    if data:
+        # Add body params (eg. --data "param1=value1&param2=value2")
+        # command += ' --data "{0}"'.format(urlencode(data))
+        command += ' --data "{0}"'.format(data)
+    return command
 
-    func = getattr(requests, method.lower())
-    resp = func(url, data=data or '', headers=headers or {})
-    resp.connection.close()
-
-    status = resp.status_code
-    if 200 <= status < 300:
-        return status, resp.json()
-    else:
-        if DEBUG:
-            # Try providing a full curl command for reproducing the API call
-            # on the command-line...
-            args = (resp.json()['message'], method.upper(), url)
-            msg = "{0} - curl -X {1} {2}".format(*args)
-            if headers:
-                for k, v in headers.items():
-                    msg += ' -H "{0}: {1}"'.format(k, v)
-            if data:
-                # Add body params (eg. --data "param1=value1&param2=value2")
-                msg += ' --data "{0}"'.format(urlencoded_data)
-        else:
-            args = (resp.json()['message'], method.upper(), url)
-            msg = "{0} - {1} {2}".format(*args)
-        raise RelayrApiException(msg)
-
-
-class RelayrAPI(object):
+class Api(object):
     """
     This class provides direct access to the Relayr API endpoints.
 
@@ -84,11 +88,11 @@ class RelayrAPI(object):
     .. code-block:: python
 
         # Create an anonymous client and call simple API endpoints:
-        from relayr.api import RelayrAPI
-        ra = RelayrAPI()
-        assert ra.get_server_status() == {'database': 'ok'}
-        assert ra.get_users_validate('god@in.heaven') == {'exists': False}
-        assert ra.get_public_device_model_meanings() > 0
+        from relayr.api import Api
+        a = Api()
+        assert a.get_server_status() == {'database': 'ok'}
+        assert a.get_users_validate('god@in.heaven') == {'exists': False}
+        assert a.get_public_device_model_meanings() > 0
 
     """
     def __init__(self, host=None, **kwargs):
@@ -110,11 +114,70 @@ class RelayrAPI(object):
         if self.token:
             self.headers['Authorization'] = 'Bearer {0}'.format(self.token)
 
+        if LOG:
+            self.logger = create_logger(self)
+            self.logger.info('started')
+
         # check if the API is available
         try:
             self.get_server_status()
         except:
             raise 
+
+    def __del__(self):
+        """Object destruction..."""
+        if LOG:
+            self.logger.info('terminated')
+
+    def perform_request(self, method, url, data=None, headers=None):
+        """
+        Perform an API call and return JSON result as Python datastructure.
+
+        Query parameters are expected in the ``url`` parameter.
+        For returned status codes other than 2XX a ``RelayrApiException``
+        is raised that contains the API call (method and URL) plus 
+        a ``curl`` command replicating the API call for debugging reuse 
+        on the command-line.
+        """
+
+        if LOG:
+            command = build_curl_call(method, url, data, headers)
+            self.logger.info("API request: " + command)
+
+        urlencoded_data = None
+        if data is not None:
+            urlencoded_data = urlencode(data)
+            data = json.dumps(data)
+            try:
+                data = data.encode('utf-8')
+            except (UnicodeDecodeError, AttributeError):
+                # bytes/str - no need to re-encode
+                pass
+
+        func = getattr(requests, method.lower())
+        resp = func(url, data=data or '', headers=headers or {})
+        resp.connection.close()
+
+        if LOG:
+            # self.logger.info("API response header: " + resp.headers)
+            self.logger.info("API response content: " + resp.content)
+
+        status = resp.status_code
+        if 200 <= status < 300:
+            try:
+                js = resp.json()
+            except:
+                js = None
+                # raise ValueError('Invalid JSON code(?): %r' % resp.content)
+                if DEBUG:
+                    warnings.warn("Replaced suspicious API response (invalid JSON?) %r with 'null'!" % resp.content)
+            return status, js
+        else:
+            args = (resp.json()['message'], method.upper(), url)
+            msg = "{0} - {1} {2}".format(*args)
+            command = build_curl_call(method, url, urlencoded_data, headers)
+            msg = "%s - %s" % (msg, command)
+            raise RelayrApiException(msg)
 
     # ..............................................................................
     # System
@@ -130,14 +193,12 @@ class RelayrAPI(object):
     
         Sample result::
     
-            {
-                "exists": True
-            }
+            {"exists": True}
         """
         
         # https://api.relayr.io/users/validate?email=<userEmail>
         url = '{0}/users/validate?email={1}'.format(self.host, userEmail)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_server_status(self):
@@ -148,14 +209,12 @@ class RelayrAPI(object):
 
         Sample result::
 
-            {
-                "database": "ok"
-            }
+            {"database": "ok"}
         """
 
         # https://api.relayr.io/server-status
         url = '{0}/server-status'.format(self.host)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def post_oauth2_token(self, clientID, clientSecret, code, redirectURI):
@@ -173,7 +232,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/oauth2/token
         url = '{0}/oauth2/token'.format(self.host)
-        _, data = perform_request('POST', url, data=data, headers=self.headers)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
     def get_oauth2_appdev_token(self, appID):
@@ -194,7 +253,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/oauth2/appdev-token/<appID>
         url = '{0}/oauth2/appdev-token/{1}'.format(self.host, appID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
     
     def post_oauth2_appdev_token(self, appID):
@@ -208,7 +267,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/oauth2/appdev-token/<appID>
         url = '{0}/oauth2/appdev-token/{1}'.format(self.host, appID)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
     def delete_oauth2_appdev_token(self, appID):
@@ -218,7 +277,7 @@ class RelayrAPI(object):
         
         # https://api.relayr.io/oauth2/appdev-token/<appID>
         url = '{0}/oauth2/appdev-token/{1}'.format(self.host, appID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     # ..............................................................................
@@ -242,7 +301,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/oauth2/user-info
         url = '{0}/oauth2/user-info'.format(self.host)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def patch_user(self, userID, name=None, email=None):
@@ -264,25 +323,25 @@ class RelayrAPI(object):
         if email is not None:
             data.update(email=email)
 
-        # https://api.relayr.io//users/%s
+        # https://api.relayr.io/users/%s
         url = '{0}/users/{1}'.format(self.host, userID)
-        _, data = perform_request('PATCH', url, body=data, headers=self.headers)
+        _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
         return data
 
     def post_user_app(self, userID, appID):
         "Install a new app under a specific user."
 
-        # https://api.relayr.io//users/%s/apps/%s
+        # https://api.relayr.io/users/%s/apps/%s
         url = '{0}/users/{1}/apps/{2}'.format(self.host, userID, appID)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
     def delete_user_app(self, userID):
         "Uninstall an app of a specific user."
 
-        # https://api.relayr.io//users/%s/apps/%s
+        # https://api.relayr.io/users/%s/apps/%s
         url = '{0}/users/{1}/apps/{2}'.format(self.host, userID, appID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     def get_user_publishers(self, userID):
@@ -294,9 +353,9 @@ class RelayrAPI(object):
         :rtype: list of dicts ... 
         """
         
-        # https://api.relayr.io//users/%s/publishers
+        # https://api.relayr.io/users/%s/publishers
         url = '{0}/users/{1}/publishers'.format(self.host, userID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_user_apps(self, userID):
@@ -308,9 +367,9 @@ class RelayrAPI(object):
         :rtype: list of dicts ... with IDs and secrets
         """
 
-        # https://api.relayr.io//users/%s/apps
+        # https://api.relayr.io/users/%s/apps
         url = '{0}/users/{1}/apps'.format(self.host, userID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_user_transmitters(self, userID):
@@ -322,9 +381,9 @@ class RelayrAPI(object):
         :rtype: list of dicts with IDs and secrets
         """
     
-        # https://api.relayr.io//users/%s/transmitters
+        # https://api.relayr.io/users/%s/transmitters
         url = '{0}/users/{1}/transmitters'.format(self.host, userID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_user_devices(self, userID):
@@ -336,9 +395,9 @@ class RelayrAPI(object):
         :rtype: list of dicts ...
         """
                 
-        # https://api.relayr.io//users/%s/devices
+        # https://api.relayr.io/users/%s/devices
         url = '{0}/users/{1}/devices'.format(self.host, userID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_user_devices_filtered(self, userID, meaning):
@@ -352,9 +411,9 @@ class RelayrAPI(object):
         :rtype: list of dicts ...
         """
 
-        # https://api.relayr.io//users/%s/devices?meaning=%s
+        # https://api.relayr.io/users/%s/devices?meaning=%s
         url = '{0}/users/{1}/devices?meaning={}'.format(self.host, userID, meaning)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_user_devices_bookmarked(self, userID):
@@ -366,9 +425,9 @@ class RelayrAPI(object):
         :rtype: list of dicts ...
         """
                 
-        # https://api.relayr.io//users/%s/devices/bookmarks
+        # https://api.relayr.io/users/%s/devices/bookmarks
         url = '{0}/users/{1}/devices/bookmarks'.format(self.host, userID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def delete_user_devices_bookmarked(self, userID, deviceID):
@@ -380,9 +439,9 @@ class RelayrAPI(object):
         :rtype: list of dicts ...
         """
                 
-        # https://api.relayr.io//users/%s/devices/%s/bookmarks
+        # https://api.relayr.io/users/%s/devices/%s/bookmarks
         url = '{0}/users/{1}/devices/{}/bookmarks'.format(self.host, userID, deviceID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     def post_user_wunderbar(self, userID):
@@ -431,7 +490,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/users/%s/wunderbar
         url = '{0}/users/{1}/wunderbar'.format(self.host, userID)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
     def post_users_destroy(self, userID):
@@ -444,7 +503,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/users/%s/destroy-everything-i-love
         url = '{0}/users/{1}/destroy-everything-i-love'.format(self.host, userID)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
     # ..............................................................................
@@ -460,7 +519,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/apps
         url = '{0}/apps'.format(self.host)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def post_app(self, appName, publisherID, redirectURI, appDescription):
@@ -478,7 +537,7 @@ class RelayrAPI(object):
         }
         # https://api.relayr.io/apps
         url = '{0}/apps'.format(self.host)
-        _, data = perform_request('POST', url, data=data, headers=self.headers)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
     def get_app_info(self, appID):
@@ -497,7 +556,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/apps/<appID>
         url = '{0}/apps/{1}'.format(self.host, appID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_app_info_extended(self, appID):
@@ -519,7 +578,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/apps/<appID>/extended
         url = '{0}/apps/{1}/extended'.format(self.host, appID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
     
     
@@ -559,7 +618,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/apps/<appID>
         url = '{0}/apps/{1}'.format(self.host, appID)
-        _, data = perform_request('PATCH', url, data=data, headers=self.headers)
+        _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
         return data
 
     def delete_app(self, appID):
@@ -573,7 +632,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/apps/<appID>
         url = '{0}/apps/{1}'.format(self.host, appID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     def get_oauth2_app_info(self):
@@ -591,7 +650,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/oauth2/app-info
         url = '{0}/oauth2/app-info'.format(self.host)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def post_app_device(appID, deviceID):
@@ -600,7 +659,7 @@ class RelayrAPI(object):
         """
         # {{relayrAPI}}/apps/{{appID}}/devices/{{deviceID}}
         url = '{0}/apps/{1}/devices/{2}'.format(self.host, appID, deviceID)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
     def delete_app_device(appID, deviceID):
@@ -609,7 +668,7 @@ class RelayrAPI(object):
         """
         # {{relayrAPI}}/apps/{{appID}}/devices/{{deviceID}}
         url = '{0}/apps/{1}/devices/{2}'.format(self.host, appID, deviceID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     # ..............................................................................
@@ -625,7 +684,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/publishers
         url = '{0}/publishers'.format(self.host)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
         
     def post_publisher(self, userID, name):
@@ -642,7 +701,7 @@ class RelayrAPI(object):
         # https://api.relayr.io/publishers
         data = {'owner': userID, 'name': name}
         url = '{0}/publishers'.format(self.host)
-        _, data = perform_request('POST', url, data=data, headers=self.headers)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
     def delete_publisher(self, publisherID):
@@ -656,7 +715,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/publishers
         url = '{0}/publishers/{1}'.format(self.host, publisherID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     def get_publisher_apps(self, publisherID):
@@ -668,7 +727,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/publishers/<id>/apps
         url = '{0}/publishers/{1}/apps'.format(self.host, publisherID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_publisher_apps_extended(self, publisherID):
@@ -680,7 +739,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/publishers/<id>/apps/extended
         url = '{0}/publishers/{1}/apps/extended'.format(self.host, publisherID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
     
     
@@ -701,13 +760,67 @@ class RelayrAPI(object):
         
         # https://api.relayr.io/publishers/<id>
         url = '{0}/publishers/{1}'.format(self.host, publisherID)
-        _, data = perform_request('PATCH', url, data=data, headers=self.headers)
+        _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
         return data
 
     # ..............................................................................
     # Devices
     # ..............................................................................
     
+    def get_device_configuration(self, deviceID):
+        """
+        Returns info about a device's current configuration and config. schema.
+
+        Example result::
+
+            {
+                "version": "1.0.0", 
+                "configuration": {
+                    "defaultValues": {
+                        "frequency": 1000
+                    }, 
+                    "schema": {
+                        "required": [
+                            "frequency"
+                        ], 
+                        "type": "object", 
+                        "properties": {
+                            "frequency": {
+                                "minimum": 5, 
+                                "type": "integer", 
+                                "description": "Frequency of the sensor updates in milliseconds"
+                            }
+                        }, 
+                        "title": "Relayr configuration schema"
+                    }
+                }
+            }
+
+        :param deviceID: the device UID
+        :type deviceID: string
+        """
+        
+        # https://api.relayr.io/devices/<deviceID>/firmware
+        url = '{0}/devices/{1}/firmware'.format(self.host, deviceID)
+        _, data = self.perform_request('GET', url, headers=self.headers)
+        return data
+
+    def post_device_configuration(self, deviceID, frequency):
+        """
+        Modify the configuration of a specific device facillitated by a schema.
+
+        :param deviceID: the device UID
+        :type deviceID: string
+        :param frequency: the number of ms between two sensor transmissions
+        :type frequency: integer
+        """
+        
+        data = {'frequency': frequency, 'deviceId': deviceID}
+        # https://api.relayr.io/devices/<deviceID>/configuration
+        url = '{0}/devices/{1}/configuration'.format(self.host, deviceID)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
+
     def get_public_devices(self, meaning=''):
         """
         Return list of all public devices (no credentials needed).
@@ -721,7 +834,7 @@ class RelayrAPI(object):
         url = '{0}/devices/public'.format(self.host)
         if meaning:
             url += '?meaning={0}'.format(meaning)
-        _, data = perform_request('GET', url)
+        _, data = self.perform_request('GET', url)
         return data
 
     def post_device(self, appName, publisherID, redirectURI, appDescription):
@@ -739,7 +852,7 @@ class RelayrAPI(object):
         }
         # https://api.relayr.io/devices
         url = '{0}/devices'.format(self.host)
-        _, data = perform_request('POST', url, data=data, headers=self.headers)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
     def get_device(self, deviceID):
@@ -756,7 +869,7 @@ class RelayrAPI(object):
         
         # https://api.relayr.io/devices/%s
         url = '{0}/devices/{1}'.format(self.host, deviceID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def patch_device(self, deviceID=None, deviceName=None, deviceDescription=None, deviceModel=None, isDevicePublic=None):
@@ -779,10 +892,10 @@ class RelayrAPI(object):
         }
         for k, v in data.items():
             if v is None:
-                del data[v]
+                del data[k]
         # https://api.relayr.io/devices/%s
         url = '{0}/devices/{1}'.format(self.host, deviceID)
-        _, data = perform_request('PATCH', url, data=data, headers=self.headers)
+        _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
         return data
 
     def delete_device(self, deviceID):
@@ -795,7 +908,7 @@ class RelayrAPI(object):
         """
         # https://api.relayr.io/devices/%s
         url = '{0}/devices/{1}'.format(self.host, deviceID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     def get_device_apps(self, deviceID):
@@ -809,7 +922,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/devices/<deviceID>/apps
         url = '{0}/devices/{1}/apps'.format(self.host, deviceID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def post_devices_supscription(self, deviceID):
@@ -832,17 +945,16 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/devices/%s/subscription
         url = '{0}/devices/{1}/subscription'.format(self.host, deviceID)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
-    def post_device_command(self, deviceID, command):
+    def post_device_command(self, deviceID, command, data):
         """
         Send a command to a specific device.
         """
-
-        # https://api.relayr.io/devices/<deviceID>/cmd
+        # https://api.relayr.io/devices/<deviceID>/cmd/<command>
         url = '{0}/devices/{1}/cmd/{2}'.format(self.host, deviceID, command)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
     def post_device_app(deviceID, appID):
@@ -851,7 +963,7 @@ class RelayrAPI(object):
         """
         # {{relayrAPI}}/devices/{{deviceID}}/apps/{{appID}}
         url = '{0}/devices/{1}/apps/{2}'.format(self.host, deviceID, appID)
-        _, data = perform_request('POST', url, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
     def delete_device_app(deviceID, appID):
@@ -860,7 +972,7 @@ class RelayrAPI(object):
         """
         # {{relayrAPI}}/devices/{{deviceID}}/apps/{{appID}}
         url = '{0}/devices/{1}/apps/{2}'.format(self.host, appID, deviceID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     # ..............................................................................
@@ -876,7 +988,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/device-models
         url = '{0}/device-models'.format(self.host)
-        _, data = perform_request('GET', url)
+        _, data = self.perform_request('GET', url)
         return data
 
     def get_device_model(self, devicemodelID):
@@ -888,7 +1000,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/device-models/<id>
         url = '{0}/device-models/{1}'.format(self.host, devicemodelID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def get_public_device_model_meanings(self):
@@ -900,7 +1012,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/device-models/meanings
         url = '{0}/device-models/meanings'.format(self.host)
-        _, data = perform_request('GET', url)
+        _, data = self.perform_request('GET', url)
         return data
 
     # ..............................................................................
@@ -918,7 +1030,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def post_transmitter(self, transmitterID, owner=None, name=None):
@@ -942,7 +1054,7 @@ class RelayrAPI(object):
         
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
-        _, data = perform_request('POST', url, data=data, headers=self.headers)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
     def patch_transmitter(self, transmitterID, name=None):
@@ -962,7 +1074,7 @@ class RelayrAPI(object):
                 
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
-        _, data = perform_request('PATCH', url, data=data, headers=self.headers)
+        _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
         return data
 
     def delete_transmitter(self, transmitterID):
@@ -976,7 +1088,7 @@ class RelayrAPI(object):
 
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
-        _, data = perform_request('DELETE', url, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
     def post_transmitter_device(self, transmitterID, deviceID):
@@ -992,7 +1104,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
         url = '{0}/transmitters/{1}/devices/{}'.format(self.host, transmitterID, deviceID)
-        _, data = perform_request('POST', url, data=data, headers=self.headers)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
     def get_transmitter_devices(self, transmitterID):
@@ -1006,7 +1118,7 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/transmitters/<transmitterID>/devices
         url = '{0}/transmitters/{1}/devices'.format(self.host, transmitterID)
-        _, data = perform_request('GET', url, headers=self.headers)
+        _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
     def delete_transmitter_device(self, transmitterID, deviceID):
@@ -1022,5 +1134,5 @@ class RelayrAPI(object):
     
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
         url = '{0}/transmitters/{1}/devices/{}'.format(self.host, transmitterID, deviceID)
-        _, data = perform_request('DELETE', url, data=data, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, data=data, headers=self.headers)
         return data

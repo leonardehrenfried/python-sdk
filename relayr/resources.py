@@ -15,10 +15,9 @@ from relayr.dataconnection import PubnubDataConnection
 class User(object):
     "A Relayr user."
 
-    def __init__(self, userID=None, client=None, **context):
+    def __init__(self, userID=None, client=None):
         self.userID = userID
         self.client = client
-        self.context = context
 
     def __repr__(self):
         return "%s(userID=%r)" % (self.__class__.__name__, self.userID)
@@ -26,8 +25,8 @@ class User(object):
     def get_publishers(self):
         "Return a generator of the publishers of the user."
 
-        for pub_json in self.client.api.get_user_publishers(self.userID, **self.context):
-            p = Publisher(pub_json['id'], client=self.client, **self.context)
+        for pub_json in self.client.api.get_user_publishers(self.userID):
+            p = Publisher(pub_json['id'], client=self.client)
             for k in pub_json:
                 setattr(p, k, pub_json[k])
             yield p
@@ -35,25 +34,25 @@ class User(object):
     def get_apps(self):
         "Return a generator of the apps of the user."
 
-        for app_json in self.client.api.get_user_apps(self.userID, **self.context):
+        for app_json in self.client.api.get_user_apps(self.userID):
             ## TODO: change 'app' field to 'id' in API?
-            app = App(app_json['app'], client=self.client, **self.context)
+            app = App(app_json['app'], client=self.client)
             app.get_info()
             yield app
 
     def get_transmitters(self):
         "Return a generator of the transmitters of the user."
 
-        for trans_json in self.client.api.get_user_transmitters(self.userID, **self.context):
-            trans = Transmitter(trans_json['id'], client=self.client, **self.context)
+        for trans_json in self.client.api.get_user_transmitters(self.userID):
+            trans = Transmitter(trans_json['id'], client=self.client)
             trans.get_info()
             yield trans
 
     def get_devices(self):
         "Return a generator of the devices of the user."
 
-        for dev_json in self.client.api.get_user_devices(self.userID, **self.context):
-            dev = Device(dev_json['id'], client=self.client, **self.context)
+        for dev_json in self.client.api.get_user_devices(self.userID):
+            dev = Device(dev_json['id'], client=self.client)
             dev.get_info()
             yield dev
 
@@ -80,13 +79,13 @@ class User(object):
     
         :rtype: A generator over the registered devices and one transmitter.
         """    
-        res = self.client.api.post_user_wunderbar(self.userID, **self.context)
+        res = self.client.api.post_user_wunderbar(self.userID)
         for k, v in res.items():
             if 'model' in v:
-                item = Device(res[k]['id'], client=self.client, *self.context)
+                item = Device(res[k]['id'], client=self.client)
                 item.get_info()
             else:
-                item = Transmitter(res[k]['id'], client=self.client, *self.context)
+                item = Transmitter(res[k]['id'], client=self.client)
                 item.get_info()
             yield item
 
@@ -97,7 +96,7 @@ class User(object):
         :param userID: the users's UID
         :type userID: string
         """    
-        res = self.client.api.post_users_destroy(self.userID, **self.context)
+        res = self.client.api.post_users_destroy(self.userID)
         return res
 
 
@@ -137,7 +136,7 @@ class Publisher(object):
             func = self.client.api.get_publisher_apps_extended
         return func(self.publisherID)
 
-    def update(self, name=None, **context):
+    def update(self, name=None):
         """
         Update certain information fields of the publishers.
         
@@ -176,9 +175,8 @@ class App(object):
     to and disconnected from devices.
     """
     
-    def __init__(self, appID=None, client=None, **context):
+    def __init__(self, appID=None, client=None):
         self.appID = appID
-        self.context = context
         self.client = client
 
     def __repr__(self):
@@ -207,7 +205,7 @@ class App(object):
             setattr(self, k, res[k])
         return self
 
-    def update(self, description=None, name=None, redirectUri=None, **context):
+    def update(self, description=None, name=None, redirectUri=None):
         """
         Update certain fields in the application description.
         
@@ -219,7 +217,7 @@ class App(object):
         :type redirectUri: string
         """
         res = self.client.api.patch_app(self.appID, description=description,
-            name=name, redirectUri=redirectUri, **context)
+            name=name, redirectUri=redirectUri)
         for k in res:
             setattr(self, k, res[k])
         return self
@@ -271,10 +269,9 @@ class Device(object):
     A Relayr device.
     """
 
-    def __init__(self, deviceID=None, client=None, **context):
+    def __init__(self, deviceID=None, client=None):
         self.deviceID = deviceID
         self.client = client
-        self.context = context
 
     def __repr__(self):
         return "%s(deviceID=%r)" % (self.__class__.__name__, self.deviceID)
@@ -295,6 +292,25 @@ class Device(object):
                 setattr(self, k, res[k])
         return self
 
+    def update(self, description=None, name=None, model=None, public=None):
+        """
+        Update certain fields in the device description.
+        
+        :param description: the description to be set
+        :type description: string
+        :param name: the user name to be set
+        :type name: string
+        :param model: the device model to be set
+        :type name: string?
+        :param public: a flag for making the device public
+        :type redirectUri: boolean
+        """
+        res = self.client.api.patch_device(self.deviceID, deviceDescription=description,
+            deviceName=name, deviceModel=model, isDevicePublic=public)
+        for k in res:
+            setattr(self, k, res[k])
+        return self
+
     def get_connected_apps(self):
         """
         Get all apps connected to this device.
@@ -302,7 +318,7 @@ class Device(object):
         :rtype: A list of apps.
         """
 
-        res = self.client.api.get_device_apps(self.deviceID, **self.context)
+        res = self.client.api.get_device_apps(self.deviceID)
         return res
 
     def connect_to_app(self, app):
@@ -340,17 +356,39 @@ class Device(object):
         creds = self.client.api.post_devices_supscription(self.deviceID)
         return PubnubDataConnection(callback, creds)
 
-    def send_command(self, command):
+    def send_command(self, command, data):
         """
         Send a command to this device.
 
         :param command: the command to be sent
         :type command: string
+        :param data: the command data to be sent
+        :type command: dict
         """
         
-        res = self.client.api.post_device_command(self.deviceID, command, **self.context)
+        res = self.client.api.post_device_command(self.deviceID, command, data)
         return res
 
+    def delete(self):
+        """
+        Delete this device from the Relayr cloud.
+
+        :type command: self
+        """
+        
+        res = self.client.api.delete_device(self.deviceID)
+        return self
+
+    def switch_led_on(self, bool=True):
+        """
+        Switch on device's LED for ca. 10 seconds or switch it off now.
+
+        :param bool: the desired state, on if True (default), off if False
+        :type bool: boolean
+        :type command: self
+        """
+        self.send_command('led', {'cmd': int(bool)})
+        return self
 
 class DeviceModel(object):
     """
@@ -396,11 +434,24 @@ class Transmitter(object):
             setattr(self, k, v)
         return self
 
+    def delete(self):
+        """
+        Delete this transmitter from the Relayr cloud.
+
+        :type command: self
+        """
+        
+        res = self.client.api.delete_transmitter(self.transmitterID)
+        return self
+
     def update(self, name=None):
         """
         Set transmitter info.
         """
-        return self.client.api.patch_transmitter(self.transmitterID, name=name)
+        res = self.client.api.patch_transmitter(self.transmitterID, name=name)
+        for k, v in res.items():
+            setattr(self, k, v)
+        return self
 
     def get_connected_devices(self):
         """
