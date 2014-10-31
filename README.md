@@ -13,7 +13,7 @@ You can install the library using one of the following methods, using Pip:
 
     	pip install git+https://github.com/relayr/python-sdk
 
-2. Once the package is on the [Python Package Index](https://pypi.python.org/pypi) you may us the following to install it:
+2. You may us the following to install the package from the [Python Package Index](https://pypi.python.org/pypi):
 
     
 		pip install relayr
@@ -23,7 +23,6 @@ You can install the library using one of the following methods, using Pip:
 
 
 ### Switching on/off an LED light on a device:
-
 
 	from relayr import Client
 	c = Client(token='<my_access_token>')
