@@ -23,6 +23,6 @@ def fix_anonymous():
 def fix_registered():
     "Return fixture for access by a registered user."
     sys.path.insert(0, os.path.dirname(__file__))
-    import fixture_registered
+    import fixture_registered_dcg
     del sys.path[0]
-    return fixture_registered
+    return fixture_registered_dcg
