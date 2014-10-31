@@ -22,17 +22,11 @@ testset1 = {
     'appName': '...',
     'publisherID': '...',
     'deviceID': '...',
+    'transmitterID': '...',
+    'transmitterName': '...',
     'description': "...",
     'useragent': '...',
     'token': '...',
-}
-
-special = {
-    'token': '...',
-    'userName': '...', 
-    'publisherID': '...',
-    'deviceID': '...',
-    'transmitterID': '...',
 }
 
 testset2 = {

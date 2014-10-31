@@ -32,7 +32,7 @@ class TestInstallation(object):
         from relayr.resources import User, Publisher, App, Transmitter, \
             Device, DeviceModel
         from relayr.exceptions import RelayrApiException
-        from relayr.api import perform_request
+        from relayr import Api
 
 
 class TestRawAPI(object):
@@ -76,20 +76,20 @@ class TestRequests(object):
 
     def test_unknown_endpoint(self, fix_anonymous):
         "Test accessing an unknown API endpoint."
-        from relayr.api import perform_request
+        from relayr import Api
         from relayr.exceptions import RelayrApiException
         with pytest.raises(RelayrApiException) as excinfo:
             url = '%s/this-should-not-exist' % fix_anonymous.testset0['relayrAPI']
-            resp = perform_request('GET', url)
+            resp = Api().perform_request('GET', url)
         assert str(excinfo.value).startswith('URL could not be routed.')
 
     def test_unknown_endpoint_data(self, fix_anonymous):
         "Test accessing an unknown API endpoint with body data."
-        from relayr.api import perform_request
+        from relayr import Api
         from relayr.exceptions import RelayrApiException
         with pytest.raises(RelayrApiException) as excinfo:
             url = '%s/this-should-not-exist' % fix_anonymous.testset0['relayrAPI']
-            resp = perform_request('POST', url, data={'foo': 42, 'bar': 23})
+            resp = Api().perform_request('POST', url, data={'foo': 42, 'bar': 23})
         assert str(excinfo.value).startswith('URL could not be routed.')
         assert '--data "foo=42&bar=23"' in str(excinfo.value) or \
             '--data "bar=23&foo=42"' in str(excinfo.value)
@@ -118,4 +118,8 @@ class TestAPIAnonymous(object):
         assert str(excinfo.value).startswith('CredentialsMissing')
 
     def test_list_all_publishers(self):
-        pass
+        from relayr import Client
+        c = Client()
+        expected_attrs = set(['id', 'name', 'owner'])
+        for p in c.get_public_publishers():
+            assert expected_attrs.issubset(set(dir(p))) == True

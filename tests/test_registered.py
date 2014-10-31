@@ -44,7 +44,7 @@ class TestAPI(object):
         res = c.api.get_oauth2_appdev_token(app.id)
         assert res['token'] == token
 
-    @pytest.mark.skip(reason="unfinished") ################### xxx
+    @pytest.mark.skip(reason="unfinished") ###################
     def test_post_oauth2_token(self, fix_registered):
         "Test post oauth2 token."
         from relayr import Client
@@ -93,7 +93,7 @@ class TestAPI(object):
     def test_get_transmitters(self, fix_registered):
         "Test get user's transmitters."
         from relayr import Client
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
         user_info = c.api.get_oauth2_user_info()
         trans_info = c.api.get_user_transmitters(user_info['id'])
@@ -104,18 +104,18 @@ class TestAPI(object):
     def test_apps_of_connected_user(self, fix_registered):
         "Get apps of connected user."
         from relayr import Client
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
-        apps = c.api.get_user_apps(r.api.get_oauth2_user_info()['id'])
+        apps = c.api.get_user_apps(c.api.get_oauth2_user_info()['id'])
         assert len(apps) > 0
         assert type(apps[0]) == dict
 
     def test_device_credentials(self, fix_registered):
         "Test get credentials for subscribing to a device."
         from relayr import Client
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
-        deviceID = fix_registered.special['deviceID']
+        deviceID = fix_registered.testset1['deviceID']
         creds = c.api.post_devices_supscription(deviceID)
         for key in 'authKey subscribeKey cipherKey channel'.split():
             assert key in creds
@@ -123,7 +123,7 @@ class TestAPI(object):
     def test_get_wunderbar(self, fix_registered):
         "Test get info about the user's registered wunderbar device."
         from relayr import Client
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
         user_info = c.api.get_oauth2_user_info()
         wb_dev_info = c.api.post_user_wunderbar(user_info['id'])
@@ -156,7 +156,7 @@ class TestClient(object):
         # Fails with my own token.
         from relayr import Client
         from relayr.resources import User, Publisher, App, Device
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
         usr = c.get_user()
         assert usr.__class__ == User
@@ -195,12 +195,12 @@ class TestClient(object):
         "Test send a command to a device."
         from relayr import Client
         from relayr.resources import Device
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
-        deviceID = fix_registered.special['deviceID']
+        deviceID = fix_registered.testset1['deviceID']
         dev = Device(deviceID=deviceID, client=c)
         dev.get_info()
-        # dev.send_command(1) # Internal error occurred.
+        dev.send_command('led', {'cmd': 1})
 
     # @pytest.xfail("no api method?")
     def test_publish_device(self):
@@ -210,7 +210,7 @@ class TestClient(object):
     def test_get_wunderbar_devices(self, fix_registered):
         "Test get user's registered wunderbar devices and master."
         from relayr import Client
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
         usr = c.get_user()
         items = list(usr.register_wunderbar())
@@ -224,12 +224,12 @@ class TestTransmitters(object):
         "Test getting devices of a known transmitter."
         from relayr import Client
         from relayr.resources import Transmitter
-        token = fix_registered.special['token']
-        transmitterID = fix_registered.special['transmitterID']
+        token = fix_registered.testset1['token']
+        transmitterID = fix_registered.testset1['transmitterID']
         c = Client(token=token)
         t = Transmitter(transmitterID=transmitterID, client=c)
         t.get_info()
-        assert t.name == 'in the neighbourhood'
+        assert t.name == fix_registered.testset1['transmitterName']
         devs = t.get_connected_devices()
         assert len(list(devs)) == 6
 
@@ -279,8 +279,8 @@ class TestPubNub(object):
         import time
         from relayr import Client
         from relayr.resources import Device
-        token = fix_registered.special['token']
-        deviceID = fix_registered.special['deviceID']
+        token = fix_registered.testset1['token']
+        deviceID = fix_registered.testset1['deviceID']
         self.received_data = []
         c = Client(token=token)
         dev = Device(deviceID=deviceID, client=c).get_info()
@@ -301,10 +301,10 @@ class TestWunderbar(object):
         "Test get all devices on a Wunderbar."
         from relayr import Client
         from relayr.resources import Device, Transmitter
-        token = fix_registered.special['token']
+        token = fix_registered.testset1['token']
         c = Client(token=token)
         usr = c.get_user()
-        assert usr.name == fix_registered.special['userName']
+        assert usr.name == fix_registered.testset1['userName']
         devs = usr.register_wunderbar()
         for d in devs:
             assert d.__class__ in (Device, Transmitter)
