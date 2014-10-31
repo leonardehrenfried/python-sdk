@@ -25,12 +25,33 @@ will be uploaded there)::
 For more options please consult the documentation.
 
 
-Example use
------------
+Examples
+--------
 
-Simple use-case::
+Switch on/off an LED light on a device:
 
-    ...
+.. code-block:: python
+
+	from relayr import Client
+	c = Client(token='<my_access_token>')
+	d = c.get_device(deviceID='<my_device_id>')
+	d.switch_led_on(True)
+
+Receive data from a device:
+
+.. code-block:: python
+
+	import time
+	from relayr import Client
+	c = Client(token='<my_access_token>')
+	d = c.get_device(deviceID='<my_device_id>').get_info()
+	def callback(message, channel):
+	    print(repr(message), type(message))
+	user = c.get_user()
+	conn = user.connect_device(d, callback)
+	conn.start()
+	time.sleep(10)
+	conn.stop()
 
 
 Documentation
