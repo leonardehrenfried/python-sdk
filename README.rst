@@ -1,34 +1,29 @@
-Python Relayr Client
-====================
+<h1> The relayr Python Library </h1>
 
-Official client for the `Relayr`_ RESTful API. Its goal is to provide common
-ground for all Relayr-related code in Python. At the moment this comprises
-access to the `Relayr`_ cloud via the `Relayr API`_, as well as some very
-experimental direct access to local Wunderbar devices (sensors) via Bluetooth
-LE (using `BlueZ`_ on Linux).
+Welcome to the relayr Python Library. <a href="https://github.com/relayr/python-sdk">The repository</a> provides 
+Python developers with programmatic access points to the relayr platform.
 
-
-Installation
-------------
-
-The recommended installation tool of choice is `Pip`_.
-
-You can install the very latest code of the ``relayr`` package from GitHub::
-
-    pip install git+https://github.com/relayr/python-sdk
-
-or as a released package from the `Python Package Index`_ (as soon as it
-will be uploaded there)::
-
-    pip install relayr
-
-For more options please consult the documentation.
+These include access to the relayr cloud via the <a href="https://developer.relayr.io/documents/relayrAPI/Introduction">relayr API</a>
+as well as direct connection to the relayr WunderBar sensors, via Bluetooth Low Energy (using <a href="http://www.bluez.org/">BlueZ</a> on Linux). 
 
 
-Examples
---------
+<h2> Installation </h2>
 
-Switch on/off an LED light on a device:
+You can install the library using one of the following methods, using <a href="https://pip.readthedocs.org">Pip </a>
+
+1. You can download the very latest version of the repository from GitHub:
+
+    	pip install git+https://github.com/relayr/python-sdk
+
+2. Once the package is on the <a href="https://pypi.python.org/pypi">Python Package Index</a> you may us the following to install it:
+
+    
+		pip install relayr
+
+
+<h2> Examples</h2>
+
+<h3> Switching on/off an LED light on a device:</h3>
 
 .. code-block:: python
 
@@ -37,7 +32,7 @@ Switch on/off an LED light on a device:
 	d = c.get_device(deviceID='<my_device_id>')
 	d.switch_led_on(True)
 
-Receive data from a device:
+<h3> Receiving data from a device:</h3>
 
 .. code-block:: python
 
@@ -54,24 +49,19 @@ Receive data from a device:
 	conn.stop()
 
 
-Documentation
--------------
+<h2> Full Documentation Reference </h2>
 
-The existing documentation can be found in the ``docs`` subdirectory of the
-source code distribution and can be rendered into various formats. 
-`Full documentation`_ will also be provided on `Read The Docs`_, soon.
+The full reference of the package could be obtained in one of the following methods: 
+
+1. The documentation may be found in the **Docs** sub directory in the Github repository and it can be 
+rendered in various formats. Please see instructions on how to achieve this [here](http://linkToBeAdded) 
 
 
-License
--------
+2. You may access the full reference on the <a href="http://readthedocs.org">Read the Docs</a> website.
+
+
+<h2> License </h2>
+
 
 MIT License. See ``LICENCE.txt`` file contained in this package.
 
-
-.. _Relayr: http://relayr.io/
-.. _Relayr API: https://developer.relayr.io/documents/relayr%20API/Introduction/
-.. _Python Package Index: https://pypi.python.org/pypi/relayr/
-.. _Full documentation: http://relayr.readthedocs.org/
-.. _Read The Docs: http://readthedocs.org/
-.. _Pip: https://pip.readthedocs.org/
-.. _BlueZ: http://www.bluez.org/
