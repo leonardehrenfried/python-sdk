@@ -27,7 +27,7 @@ class PyTest(Command):
 
 exec(open('relayr/version.py').read())
 
-with open('README.txt') as f:
+with open('README.rst') as f:
     long_description = f.read()
 
 with open('requirements.txt') as f:
