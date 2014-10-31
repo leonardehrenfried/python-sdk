@@ -47,7 +47,7 @@ from hashlib import md5
 
 import termcolor
 
-from relayr import RelayrAPI
+from relayr import Api
 from relayr.compat import urlopen, URLError
 from relayr.version import __version__ as relayr_version
 from relayr.utils.terminalsize import get_terminal_size
@@ -68,7 +68,7 @@ def show_versions():
     "Show some versioning info."
     
     # Show header lines.
-    api = RelayrAPI()
+    api = Api()
     url = api.host
     dt = datetime.datetime.now().isoformat()
     term_width = get_terminal_size()[0]
@@ -91,7 +91,7 @@ def show_check():
     "Show some key numbers about the current state of the API."
     
     # For all this no credentials/token etc. are needed.
-    api = RelayrAPI()
+    api = Api()
 
     # Get server status.
     t0 = time.time()
