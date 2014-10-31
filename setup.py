@@ -71,8 +71,7 @@ setup(
         "Programming Language :: Python :: 3.4",
     ],
     install_requires = install_requires,
-
-    # test_suite = 'tests.test_api',
     tests_require = tests_require,
     cmdclass = {'test': PyTest},
+    zip_safe = False
 )
