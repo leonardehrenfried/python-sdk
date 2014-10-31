@@ -1,0 +1,126 @@
+.. _install:
+
+Installation
+============
+
+This part of the documentation covers the installation of the Relayr 
+client. The first step to using any software package is getting it 
+properly installed. For seasoned Python users or developers quite some
+information below will be already familiar.
+
+
+Install the installer
+----------------------
+The recommended installation tool for Python packages today is pip_.
+If you are not using it yet, please read its documentation and then 
+install it quickly like this for the Python version of your choice:
+
+.. code-block:: console
+
+    $ wget https://bootstrap.pypa.io/get-pip.py
+    $ python get-pip.py
+
+Using ``easy_install`` from setuptools_ is deprecated for `various reasons 
+<http://stackoverflow.com/questions/3220404/why-use-pip-over-easy-install>`_ 
+and `some more 
+<https://python-packaging-user-guide.readthedocs.org/en/latest/technical.html#pip-vs-easy-install>`_.
+
+
+Create a virtual environment
+-----------------------------
+
+If you want to be on the safe side and not risk the integrity of your existing
+Python installation you may want to consider creating a virtual Python environment
+(a ``virtualenv`` for short) in which to build and install the Relayr client:
+
+.. code-block:: console
+
+    $ virtualenv rvenv
+    New python executable in rvenv/bin/python
+    Installing setuptools, pip...done.
+    $ 
+
+If ``virtualenv`` is not already installed on your system, you can install it
+with ``pip install virtualenv``, too. The above lines will create a subfolder
+named ``rvenv`` containing a separate Python installation. You can activate and
+deactivate this environment as follows:
+
+.. code-block:: console
+
+    $ source rvenv/bin/activate
+    (rvenv) $ # do some work... download, test, install...
+    (rvenv) $ deactivate
+    $ 
+
+Install a Relayr Client release
+-----------------------------------
+
+To install a release of the Relayr client from PyPI_ a single pip_ command will
+do. Inside a virtual Python environment this should be done after activating this
+environment first (at the point of ``# do some work...`` in the previous section
+above). This will install the latest version:
+
+.. code-block:: console
+
+    $ pip install relayr
+
+You can also run a source distribution of a release from PyPI_ if you want to
+run the test suite and/or generate the documentation yourself, say (more about
+that see below). Just download a tarball of the sources and unpack as follows:
+
+.. code-block:: console
+
+    $ wget https://pypi.python.org/packages/source/r/relayr/relayr-0.2.tgz
+    $ tar xfz relayr-0.2.tgz
+    $ cd relayr-0.2
+    $ python setup.py install
+
+Install a Development Version
+------------------------------
+
+The Relayr client is actively developed on GitHub, where the code is
+`always available
+<https://github.com/relayr/python-sdk>`_. If you want to work with the
+development version of Relayr, there are two ways (again, both recommended
+in a virteual environment). 
+
+Checkout from repository with git
+...................................
+
+You can operate on a ``git`` checkout. This will pull in the dependencies and
+activate the ``git`` head as the current version inside the virtualenv. Then all 
+you have to do is run ``git pull origin`` to update to the latest version,
+before installing the package itself:
+
+.. code-block:: console
+
+    $ git clone http://github.com/relayr/python-sdk.git
+    Cloning into 'python-sdk'... [...]
+    $ cd python-sdk
+    $ git pull origin
+    $ python setup.py install
+
+Download from repository with pip
+...................................
+
+Or you let ``pip`` itself pull in the development version without git instead,
+like this:
+
+.. code-block:: console
+
+    $ pip install git+git://github.com/relayr/python-sdk.git
+    ...
+    Cleaning up...
+    $ python setup.py install
+
+
+If you want to create the local documentation using Sphinx_ and/or run the
+test suite using pytest_ from tox_ please read the respective sections... 
+
+
+.. _pip: https://pip.pypa.io/
+.. _setuptools: https://pypi.python.org/pypi/setuptools/
+.. _PyPI: https://pypi.python.org/
+.. _Sphinx: http://sphinx-doc.org/
+.. _tox: http://tox.readthedocs.org/en/latest/
+.. _pytest: http://pytest.org

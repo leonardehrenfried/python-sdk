@@ -1,0 +1,9 @@
+Testing 
+=======
+
+The source code distribution of the Relayr Python client contains a testsuite
+that can be run after downloading the full tarball archive. It is not installed
+together with the Python package itself, but needs to be run from the unarchived
+code distribution.
+
+More to come...

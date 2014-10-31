@@ -1,0 +1,39 @@
+.. _raspberrypi:
+
+Raspberry Pi
+============
+
+Because of its small size, low price and power consumption and its general
+extensibility the Raspberry Pi (and, in fact, other similar devices) is
+considered to be an interesting platform for projects related to the Internet
+of Things. 
+
+.. note:: 
+    - Bluez
+    - PyBluez
+    - Python 3 issues
+    - access devices via BLE
+
+
+Update BlueZ
+------------
+
+The version of BlueZ available for standard distributions for the Raspberry
+Pi like Raspbian can be pretty old (before version 5) and unable to handle
+Bluetooth LE well, if at all. It is therefore strongly recommended to install
+the most recent version using a procedure like the one below (compiling BlueZ
+on the Raspberry Pi itself takes about 20-30 minutes):
+
+.. code-block:: bash
+
+	sudo apt-get --purge remove bluez
+	sudo apt-get update
+	sudo apt-get install libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libical-dev libreadline-dev
+	wget https://www.kernel.org/pub/linux/bluetooth/bluez-5.24.tar.xz
+	tar xf bluez-5.24.tar.xz
+	cd bluez-5.24
+	./configure --prefix=/usr --enable-library --disable-systemd
+	make
+	sudo make install
+	sudo cp attrib/gatttool /usr/bin
+

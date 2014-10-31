@@ -1,0 +1,86 @@
+.. _examples:
+
+Examples
+============
+
+The following is a list of examples created with the existing Relayr API
+client. There is more to come... 
+
+
+``demos/api_check.py``
+-------------------------
+
+This script shows key public figures of the current Relayr API on the
+command-line. It does provide versioning invformation and makes a couple
+of public API calls to list current counts of publishers, applications,
+public devices and some more. A typical (slightly abbreviated) output
+will look something like this::
+
+	$ python demos/api_check.py 
+	Relayr API-Check
+	[...]
+	server status ok: True (0.42 s)
+	467 publishers (0.51 s)
+	267 applications (0.69 s)
+	328 public devices (0.74 s)
+	8 device models (0.38 s)
+	8 device model meanings (0.38 s)
+	#public devices by meaning: {
+	    "acceleration": 57, 
+	    "temperature": 84, 
+	    "noise_level": 49, 
+	    "angular_speed": 57, 
+	    "color": 77, 
+	    "luminosity": 77, 
+	    "proximity": 77, 
+	    "humidity": 84
+	}
+
+To determine the number of publishers e.g. it runs code similar to this
+(timing omitted here for brevity reasons):
+
+.. code-block:: python
+
+    from relayr import Api
+    api = Api()
+    publishers = list(api.get_public_publishers())
+    print('%d publishers' % len(publishers))
+
+
+``demos/noise.py``
+-------------------------
+
+This script establishes a connection to a Wunderbar microphone device, checks
+the incoming noise level value for some time, compares them to some maximum
+threshold and sends a reminder by email to take action if needed.
+
+Below you can see a version of that code stripped down to only a few lines:
+
+.. code-block:: python
+
+    import time
+    from relayr import Client
+    c = Client(token='<my_token>')
+    d = c.get_device(deviceID='<dev_id>').get_info()
+    def callback(message, channel):
+        print(message)
+    user = c.get_user()
+    conn = user.connect_device(d, callback)
+    conn.start()
+    time.sleep(10)
+    conn.stop()
+
+When running (with the correct token and device ID) this should print incoming
+data from the microphone sensor like this:
+
+.. code-block:: console
+
+    {"ts":1414671670992,"snd_level":20}
+    {"ts":1414671672092,"snd_level":78}
+    {"ts":1414671673192,"snd_level":38}
+    {"ts":1414671674292,"snd_level":23}
+    {"ts":1414671675392,"snd_level":19}
+    {"ts":1414671676712,"snd_level":15}
+    {"ts":1414671677812,"snd_level":21}
+    {"ts":1414671678912,"snd_level":33}
+    {"ts":1414671680012,"snd_level":28}

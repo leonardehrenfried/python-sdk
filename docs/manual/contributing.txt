@@ -1,0 +1,16 @@
+Contributing 
+=================
+
+Contributions are highly welcome and much appreciated, so please do not
+hesitate!
+
+The various SDKs for the Relyr API are still being actively developped.
+You can find the code of the
+`Python-SDK on GitHub <https://github.com/relayr/python-sdk/>`_
+which is also the place for reporting any bugs and/or patches (preferably
+in the form of a pull request). On GitHub you can also find SDKs in other
+repositories for other languages/platforms like iOS and Android.
+
+If you have more general questions it is recommended to pose them on the 
+`Relayr Forum <https://forum.relayr.io/>`_ where the Relayr team will
+respond to them in a timely manner.
