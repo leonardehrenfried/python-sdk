@@ -1,4 +1,5 @@
-<h1> The relayr Python Library </h1>
+ The relayr Python Library 
+ ========
 
 Welcome to the relayr Python Library. <a href="https://github.com/relayr/python-sdk">The repository</a> provides 
 Python developers with programmatic access points to the relayr platform.
@@ -7,7 +8,8 @@ These include access to the relayr cloud via the <a href="https://developer.rela
 as well as direct connection to the relayr WunderBar sensors, via Bluetooth Low Energy (using <a href="http://www.bluez.org/">BlueZ</a> on Linux). 
 
 
-<h2> Installation </h2>
+ Installation 
+ ------------
 
 You can install the library using one of the following methods, using <a href="https://pip.readthedocs.org">Pip </a>
 
@@ -21,9 +23,10 @@ You can install the library using one of the following methods, using <a href="h
 		pip install relayr
 
 
-<h2> Examples</h2>
+ Examples
+ -----------
 
-<h3> Switching on/off an LED light on a device:</h3>
+ Switching on/off an LED light on a device:
 
 .. code-block:: python
 
@@ -32,7 +35,7 @@ You can install the library using one of the following methods, using <a href="h
 	d = c.get_device(deviceID='<my_device_id>')
 	d.switch_led_on(True)
 
-<h3> Receiving data from a device:</h3>
+ Receiving data from a device:
 
 .. code-block:: python
 
@@ -49,7 +52,8 @@ You can install the library using one of the following methods, using <a href="h
 	conn.stop()
 
 
-<h2> Full Documentation Reference </h2>
+ Full Documentation Reference
+ -----------------------------
 
 The full reference of the package could be obtained in one of the following methods: 
 
@@ -60,7 +64,8 @@ rendered in various formats. Please see instructions on how to achieve this [her
 2. You may access the full reference on the <a href="http://readthedocs.org">Read the Docs</a> website.
 
 
-<h2> License </h2>
+ License 
+ ---------
 
 
 MIT License. See ``LICENCE.txt`` file contained in this package.
