@@ -189,7 +189,7 @@ class TestClient(object):
         token = fix_registered.testset1['token']
         deviceID = fix_registered.testset1['deviceID']
         c = Client(token=token)
-        dev = Device(deviceID=deviceID)
+        dev = Device(id=deviceID)
 
     def test_send_command_device(self, fix_registered):
         "Test send a command to a device."
@@ -198,7 +198,7 @@ class TestClient(object):
         token = fix_registered.testset1['token']
         c = Client(token=token)
         deviceID = fix_registered.testset1['deviceID']
-        dev = Device(deviceID=deviceID, client=c)
+        dev = Device(id=deviceID, client=c)
         dev.get_info()
         dev.send_command('led', {'cmd': 1})
 
@@ -227,7 +227,7 @@ class TestTransmitters(object):
         token = fix_registered.testset1['token']
         transmitterID = fix_registered.testset1['transmitterID']
         c = Client(token=token)
-        t = Transmitter(transmitterID=transmitterID, client=c)
+        t = Transmitter(id=transmitterID, client=c)
         t.get_info()
         assert t.name == fix_registered.testset1['transmitterName']
         devs = t.get_connected_devices()
@@ -244,7 +244,6 @@ class TestApps(object):
         c = Client(token=token)
         app = c.get_app()
         assert hasattr(app, 'id')
-        assert hasattr(app, 'appID')
 
     def test_app_update(self, fix_registered):
         "Test update info for some app."
@@ -283,7 +282,7 @@ class TestPubNub(object):
         deviceID = fix_registered.testset1['deviceID']
         self.received_data = []
         c = Client(token=token)
-        dev = Device(deviceID=deviceID, client=c).get_info()
+        dev = Device(id=deviceID, client=c).get_info()
         usr = c.get_user()
         conn = usr.connect_device(dev, self.receive)
         conn.start()
@@ -319,7 +318,7 @@ class TestPublishers(object):
         from relayr import Client
         from relayr.resources import Publisher
         publisherID = fix_registered.testset1['publisherID']
-        pub = Publisher(publisherID=publisherID, client=Client())
+        pub = Publisher(id=publisherID, client=Client())
         apps = pub.get_apps()
         assert len(apps) >= 1
         assert 'id' in apps[0]
@@ -329,7 +328,7 @@ class TestPublishers(object):
         from relayr import Client
         from relayr.resources import Publisher
         publisherID = fix_registered.testset1['publisherID']
-        pub = Publisher(publisherID=publisherID, client=Client())
+        pub = Publisher(id=publisherID, client=Client())
         apps = pub.get_apps(extended=True)
         assert len(apps) >= 1
         assert 'clientId' in apps[0]

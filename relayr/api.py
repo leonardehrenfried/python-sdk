@@ -412,7 +412,7 @@ class Api(object):
         """
 
         # https://api.relayr.io/users/%s/devices?meaning=%s
-        url = '{0}/users/{1}/devices?meaning={}'.format(self.host, userID, meaning)
+        url = '{0}/users/{1}/devices?meaning={2}'.format(self.host, userID, meaning)
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
@@ -440,7 +440,7 @@ class Api(object):
         """
                 
         # https://api.relayr.io/users/%s/devices/%s/bookmarks
-        url = '{0}/users/{1}/devices/{}/bookmarks'.format(self.host, userID, deviceID)
+        url = '{0}/users/{1}/devices/{2}/bookmarks'.format(self.host, userID, deviceID)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
@@ -1103,7 +1103,7 @@ class Api(object):
         """
     
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
-        url = '{0}/transmitters/{1}/devices/{}'.format(self.host, transmitterID, deviceID)
+        url = '{0}/transmitters/{1}/devices/{2}'.format(self.host, transmitterID, deviceID)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
@@ -1133,6 +1133,6 @@ class Api(object):
         """
     
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
-        url = '{0}/transmitters/{1}/devices/{}'.format(self.host, transmitterID, deviceID)
+        url = '{0}/transmitters/{1}/devices/{2}'.format(self.host, transmitterID, deviceID)
         _, data = self.perform_request('DELETE', url, data=data, headers=self.headers)
         return data

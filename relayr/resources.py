@@ -15,17 +15,17 @@ from relayr.dataconnection import PubnubDataConnection
 class User(object):
     "A Relayr user."
 
-    def __init__(self, userID=None, client=None):
-        self.userID = userID
+    def __init__(self, id=None, client=None):
+        self.id = id
         self.client = client
 
     def __repr__(self):
-        return "%s(userID=%r)" % (self.__class__.__name__, self.userID)
+        return "%s(id=%r)" % (self.__class__.__name__, self.id)
 
     def get_publishers(self):
         "Return a generator of the publishers of the user."
 
-        for pub_json in self.client.api.get_user_publishers(self.userID):
+        for pub_json in self.client.api.get_user_publishers(self.id):
             p = Publisher(pub_json['id'], client=self.client)
             for k in pub_json:
                 setattr(p, k, pub_json[k])
@@ -34,7 +34,7 @@ class User(object):
     def get_apps(self):
         "Return a generator of the apps of the user."
 
-        for app_json in self.client.api.get_user_apps(self.userID):
+        for app_json in self.client.api.get_user_apps(self.id):
             ## TODO: change 'app' field to 'id' in API?
             app = App(app_json['app'], client=self.client)
             app.get_info()
@@ -43,7 +43,7 @@ class User(object):
     def get_transmitters(self):
         "Return a generator of the transmitters of the user."
 
-        for trans_json in self.client.api.get_user_transmitters(self.userID):
+        for trans_json in self.client.api.get_user_transmitters(self.id):
             trans = Transmitter(trans_json['id'], client=self.client)
             trans.get_info()
             yield trans
@@ -51,7 +51,7 @@ class User(object):
     def get_devices(self):
         "Return a generator of the devices of the user."
 
-        for dev_json in self.client.api.get_user_devices(self.userID):
+        for dev_json in self.client.api.get_user_devices(self.id):
             dev = Device(dev_json['id'], client=self.client)
             dev.get_info()
             yield dev
@@ -62,12 +62,12 @@ class User(object):
         creds = self.client.api.post_devices_supscription(device.id)
         return PubnubDataConnection(callback, creds)
 
-    def disconnect_device(self, deviceID):
+    def disconnect_device(self, id):
         # There is no disconnect in the API...
         raise NotImplementedError
 
     def update(self, name=None, email=None):
-        res = self.client.api.patch_user(self.userID, name=name, email=email)
+        res = self.client.api.patch_user(self.id, name=name, email=email)
         for k in res:
             setattr(self, k, res[k])
         return self
@@ -79,7 +79,7 @@ class User(object):
     
         :rtype: A generator over the registered devices and one transmitter.
         """    
-        res = self.client.api.post_user_wunderbar(self.userID)
+        res = self.client.api.post_user_wunderbar(self.id)
         for k, v in res.items():
             if 'model' in v:
                 item = Device(res[k]['id'], client=self.client)
@@ -92,11 +92,8 @@ class User(object):
     def remove_wunderbar(self):
         """
         Remove all Wunderbars associated with this user.
-    
-        :param userID: the users's UID
-        :type userID: string
-        """    
-        res = self.client.api.post_users_destroy(self.userID)
+        """
+        res = self.client.api.post_users_destroy(self.id)
         return res
 
 
@@ -109,12 +106,12 @@ class Publisher(object):
     applications it has published in the Relayr cloud.
     """
 
-    def __init__(self, publisherID=None, client=None):
-        self.publisherID = publisherID
+    def __init__(self, id=None, client=None):
+        self.id = id
         self.client = client
 
     def __repr__(self):
-        return "%s(publisherID=%r)" % (self.__class__.__name__, self.publisherID)
+        return "%s(id=%r)" % (self.__class__.__name__, self.id)
 
     def get_apps(self, extended=False):
         """
@@ -134,7 +131,7 @@ class Publisher(object):
         func = self.client.api.get_publisher_apps
         if extended:
             func = self.client.api.get_publisher_apps_extended
-        return func(self.publisherID)
+        return func(self.id)
 
     def update(self, name=None):
         """
@@ -143,19 +140,19 @@ class Publisher(object):
         :param name: the user email to be set
         :type name: string
         """
-        res = self.api.patch_publisher(self.userID, name=name)
+        res = self.api.patch_publisher(self.id, name=name)
         for k in res:
             setattr(self, k, res[k])
         return self
 
-    def register(self, name, userID, publisher):
+    def register(self, name, id, publisher):
         """
         Add this publisher to the relayr repository.
 
         :param name: the publisher name to be set
         :type name: string
-        :param userID: the publisher UID to be set
-        :type userID: string(?)
+        :param id: the publisher UID to be set
+        :type id: string
         """
         raise NotImplementedError
 
@@ -163,7 +160,7 @@ class Publisher(object):
         """
         Delete this publisher from the Relayr Cloud.
         """
-        res = self.api.delete_publisher(self.publisherID)
+        res = self.api.delete_publisher(self.id)
 
 
 class App(object):
@@ -175,12 +172,12 @@ class App(object):
     to and disconnected from devices.
     """
     
-    def __init__(self, appID=None, client=None):
-        self.appID = appID
+    def __init__(self, id=None, client=None):
+        self.id = id
         self.client = client
 
     def __repr__(self):
-        return "%s(appID=%r)" % (self.__class__.__name__, self.appID)
+        return "%s(id=%r)" % (self.__class__.__name__, self.id)
 
     def get_info(self, extended=False):
         """
@@ -200,7 +197,7 @@ class App(object):
         func = self.client.api.get_app_info
         if extended:
             func = self.client.api.get_app_info_extended
-        res = func(self.appID)
+        res = func(self.id)
         for k in res:
             setattr(self, k, res[k])
         return self
@@ -216,7 +213,7 @@ class App(object):
         :param redirectUri: the redirect URI to be set
         :type redirectUri: string
         """
-        res = self.client.api.patch_app(self.appID, description=description,
+        res = self.client.api.patch_app(self.id, description=description,
             name=name, redirectUri=redirectUri)
         for k in res:
             setattr(self, k, res[k])
@@ -226,7 +223,7 @@ class App(object):
         """
         Delete this app from the Relayr Cloud.
         """
-        res = self.api.delete_publisher(self.appID)
+        res = self.api.delete_publisher(self.id)
 
     def register(self, name, publisher):
         """
@@ -269,12 +266,12 @@ class Device(object):
     A Relayr device.
     """
 
-    def __init__(self, deviceID=None, client=None):
-        self.deviceID = deviceID
+    def __init__(self, id=None, client=None):
+        self.id = id
         self.client = client
 
     def __repr__(self):
-        return "%s(deviceID=%r)" % (self.__class__.__name__, self.deviceID)
+        return "%s(id=%r)" % (self.__class__.__name__, self.id)
 
     def get_info(self):
         """
@@ -283,7 +280,7 @@ class Device(object):
         :rtype: self.
         """
 
-        res = self.client.api.get_device(self.deviceID)
+        res = self.client.api.get_device(self.id)
         for k in res:
             if k == 'model':
                 self.model = DeviceModel(res[k]['id'], client=self.client)
@@ -305,7 +302,7 @@ class Device(object):
         :param public: a flag for making the device public
         :type redirectUri: boolean
         """
-        res = self.client.api.patch_device(self.deviceID, deviceDescription=description,
+        res = self.client.api.patch_device(self.id, deviceDescription=description,
             deviceName=name, deviceModel=model, isDevicePublic=public)
         for k in res:
             setattr(self, k, res[k])
@@ -318,7 +315,7 @@ class Device(object):
         :rtype: A list of apps.
         """
 
-        res = self.client.api.get_device_apps(self.deviceID)
+        res = self.client.api.get_device_apps(self.id)
         return res
 
     def connect_to_app(self, app):
@@ -345,15 +342,15 @@ class Device(object):
         """
         raise NotImplementedError
 
-    def connect_to_public_device(self, deviceID, callback):
+    def connect_to_public_device(self, id, callback):
         """
         Subscribe a user to a public device.
 
-        :param deviceID: the device's UID
-        :type deviceID: string
+        :param id: the device's UID
+        :type id: string
 
         """
-        creds = self.client.api.post_devices_supscription(self.deviceID)
+        creds = self.client.api.post_devices_supscription(self.id)
         return PubnubDataConnection(callback, creds)
 
     def send_command(self, command, data):
@@ -366,7 +363,7 @@ class Device(object):
         :type command: dict
         """
         
-        res = self.client.api.post_device_command(self.deviceID, command, data)
+        res = self.client.api.post_device_command(self.id, command, data)
         return res
 
     def delete(self):
@@ -376,7 +373,7 @@ class Device(object):
         :type command: self
         """
         
-        res = self.client.api.delete_device(self.deviceID)
+        res = self.client.api.delete_device(self.id)
         return self
 
     def switch_led_on(self, bool=True):
@@ -395,12 +392,12 @@ class DeviceModel(object):
     Relayr device model.
     """
     
-    def __init__(self, uuid=None, client=None):
-        self.uuid = uuid
+    def __init__(self, id=None, client=None):
+        self.id = id
         self.client = client
 
     def __repr__(self):
-        return "%s(uuid=%r)" % (self.__class__.__name__, self.uuid)
+        return "%s(id=%r)" % (self.__class__.__name__, self.id)
 
     def get_info(self):
         """
@@ -408,7 +405,7 @@ class DeviceModel(object):
         
         :rtype: self.
         """
-        res = self.client.api.get_device_model(self.uuid)
+        res = self.client.api.get_device_model(self.id)
         for k, v in res.items():
             setattr(self, k, v)
         return self
@@ -417,19 +414,19 @@ class DeviceModel(object):
 class Transmitter(object):
     "A Relayr transmitter, like a Wunderbar."
     
-    def __init__(self, transmitterID=None, client=None):
-        self.transmitterID = transmitterID
+    def __init__(self, id=None, client=None):
+        self.id = id
         self.client = client
 
     def __repr__(self):
-        args = (self.__class__.__name__, self.transmitterID)
-        return "%s(transmitterID=%r)" % args
+        args = (self.__class__.__name__, self.id)
+        return "%s(id=%r)" % args
 
     def get_info(self):
         """
         Get transmitter info.
         """
-        res = self.client.api.get_transmitter(self.transmitterID)
+        res = self.client.api.get_transmitter(self.id)
         for k, v in res.items():
             setattr(self, k, v)
         return self
@@ -441,14 +438,14 @@ class Transmitter(object):
         :type command: self
         """
         
-        res = self.client.api.delete_transmitter(self.transmitterID)
+        res = self.client.api.delete_transmitter(self.id)
         return self
 
     def update(self, name=None):
         """
         Set transmitter info.
         """
-        res = self.client.api.patch_transmitter(self.transmitterID, name=name)
+        res = self.client.api.patch_transmitter(self.id, name=name)
         for k, v in res.items():
             setattr(self, k, v)
         return self
@@ -459,7 +456,7 @@ class Transmitter(object):
         
         :rtype: A list of devices.
         """
-        res = self.client.api.get_transmitter_devices(self.transmitterID)
+        res = self.client.api.get_transmitter_devices(self.id)
         for d in res:
             dev = Device(d['id'], client=self.client)
             dev.get_info()

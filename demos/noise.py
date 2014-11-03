@@ -9,6 +9,7 @@ an email notification to some receiver if that noise level exceeds
 a certain threshold.
 """
 
+import sys
 import json
 import time
 import getpass
@@ -25,8 +26,14 @@ MICROPHONE_ID = '...'
 RECEIVER = '...'
 SMTP_SERVER = '...'
 SMTP_USERNAME = '...'
-# password will be requested at run time if left empty 
-SMTP_PASSWORD = ''
+SMTP_PASSWORD = '' # will be requested at run time if left empty 
+
+try:
+    settings = [ACCESS_TOKEN, MICROPHONE_ID, RECEIVER, SMTP_SERVER, SMTP_USERNAME]
+    assert not any(map(lambda x: x=='...', settings))
+except AssertionError:
+    print('Please provide meaningful settings in the code first!')
+    sys.exit(1)
 
 
 class Callbacks(object):
@@ -76,7 +83,7 @@ def connect():
     "Connect to a device and read data for some time."
 
     c = Client(token=ACCESS_TOKEN)
-    m = c.get_device(deviceID=MICROPHONE_ID).get_info()
+    m = c.get_device(id=MICROPHONE_ID).get_info()
     cb = Callbacks(m)
     user = c.get_user()
     conn = user.connect_device(m, cb.microphone)

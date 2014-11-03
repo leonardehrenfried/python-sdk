@@ -99,7 +99,7 @@ class Client(object):
         returns the entire list result and not a paginated one.
         """
 
-        for dev in self.api.get_public_devices():
+        for dev in self.api.get_public_devices(meaning=meaning):
             d = Device(dev['id'], client=self)
             d.get_info()
             yield d
@@ -150,6 +150,6 @@ class Client(object):
         app.get_info()
         return app
 
-    def get_device(self, deviceID):
+    def get_device(self, id):
         """Returns the device with the given ID."""
-        return Device(deviceID, client=self)
+        return Device(id=id, client=self)
