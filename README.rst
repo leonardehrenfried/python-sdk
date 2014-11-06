@@ -1,7 +1,7 @@
 The relayr Python Library
 =========================
 
-Welcome to the relayr Python Library. The repository_ provides Python developers with 
+Welcome to the relayr Python Library. The repository provides you Python developers with 
 programmatic access points to the relayr platform.
 
 These include access to the relayr cloud via the relayr API_ as well as 
@@ -11,7 +11,7 @@ direct connection to the relayr WunderBar sensors, via Bluetooth Low Energy (usi
 Installation
 --------------
 
-You can install the library using one of the following methods, using Pip: 
+You can install the library using one of the following methods, with the help of Pip: 
 
 1. You can download the very latest version of the repository from GitHub:
 
