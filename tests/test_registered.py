@@ -22,6 +22,26 @@ running the tests!
 import pytest
 
 
+class TestDeviceBookmarks(object):
+    "Test device bookmarks."
+
+    def test_get_user_bookmarked_devices(self, fix_registered):
+        "Test get user's bookmarked devices."
+        from relayr import Client
+        token = fix_registered.testset1['token']
+        c = Client(token=token)
+        user = c.get_user()
+        b_devs = user.get_bookmarked_devices()
+        assert type(list(b_devs)) == list
+
+    def test_post_user_devices_bookmarks(self, fix_registered):
+        "Test get user's bookmarked devices."
+        from relayr import Client
+        token = fix_registered.testset1['token']
+        c = Client(token=token)
+        user = c.get_user()
+
+
 class TestAPI(object):
     "Test low-level access to API endpoints."
 

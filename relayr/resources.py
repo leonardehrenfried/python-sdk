@@ -96,6 +96,27 @@ class User(object):
         res = self.client.api.post_users_destroy(self.id)
         return res
 
+    def get_bookmarked_devices(self):
+        """
+        Get a list of bookmarked devices.
+
+        :rtype command: list of device objects
+        """
+        res = self.client.api.get_user_devices_bookmarks(self.id)
+        for dev in res:
+            d = Device(dev['id'], client=self.client)
+            for k, v in dev.items():
+                setattr(d, k, v)
+            d.get_info()
+            yield d
+
+    def bookmark_device(self, device):
+        res = self.client.api.post_user_devices_bookmark(self.id, device.id)
+
+    def delete_device_bookmark(self, device):
+        res = self.client.api.delete_user_devices_bookmark(self.id, device.id)
+        return res
+
 
 class Publisher(object):
     """

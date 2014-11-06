@@ -33,6 +33,7 @@ class TestInstallation(object):
             Device, DeviceModel
         from relayr.exceptions import RelayrApiException
         from relayr import Api
+        from relayr import config
 
 
 class TestRawAPI(object):
