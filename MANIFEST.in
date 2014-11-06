@@ -1,13 +1,12 @@
 include AUTHORS.txt
 include CHANGELOG.txt
-include CONTRIBUTING.md
 include LICENSE.txt
 include MANIFEST.in
-include README.txt
 include tox.ini
 include setup.py
 include runtests.py
 include requirements*.txt
+include make_docs.sh
 
 recursive-include docs *
 recursive-include tests *
