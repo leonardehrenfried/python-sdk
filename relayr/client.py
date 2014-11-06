@@ -4,20 +4,11 @@
 
 import platform
 
+from relayr import config
 from relayr.api import Api
 from relayr.version import __version__
 from relayr.exceptions import RelayrApiException
 from relayr.resources import User, App, Device, DeviceModel, Transmitter, Publisher
-
-
-DEBUG = True
-
-_userAgent = 'Python-Relayr-Client/{version} ({plat}; {pyimpl} {pyver})'.format(
-    version=__version__,
-    plat=platform.platform(),
-    pyimpl=platform.python_implementation(),
-    pyver=platform.python_version(),
-)
 
 
 class Client(object):
@@ -36,25 +27,14 @@ class Client(object):
         d = devs.next()
         apps = usr.get_apps()
     """
-    def __init__(self, host=None, token=None):
+    def __init__(self, token=None):
         """
-        :arg host: the base url for accessing the Relayr RESTful API, default
-            is ``https://api.relayr.io``.
-
         :arg token: a token generated on the Relayr site for a combination of 
             a user and an application.
+        :type token: string
         """
 
-        self.host = host or 'https://api.relayr.io'
-        self.token = token
-        self.useragent = _userAgent
-        self.headers = {
-            'User-Agent': self.useragent,
-            'Content-Type': 'application/json'
-        }
-        if self.token:
-            self.headers['Authorization'] = 'Bearer {0}'.format(self.token)
-        self.api = Api(host, token=self.token)
+        self.api = Api(token=token)
 
     def get_public_apps(self):
         """
@@ -62,6 +42,8 @@ class Client(object):
 
         This is slightly artificial as long as the called API method always
         returns the entire list result and not a paginated one.
+
+        :rtype: an App generator.
 
         .. code-block:: python
 
@@ -82,6 +64,8 @@ class Client(object):
 
         This is slightly artificial as long as the called API method always
         returns the entire list result and not a paginated one.
+
+        :rtype: a Publisher generator.
         """
 
         for pub in self.api.get_public_publishers():
@@ -97,6 +81,10 @@ class Client(object):
 
         This is slightly artificial as long as the called API method always
         returns the entire list result and not a paginated one.
+
+        :arg meaning: the *meaning* for the desired devices.
+        :type meaning: string
+        :rtype: a Device generator.
         """
 
         for dev in self.api.get_public_devices(meaning=meaning):
@@ -110,6 +98,8 @@ class Client(object):
 
         This is slightly artificial as long as the called API method always
         returns the entire list result and not a paginated one.
+
+        :rtype: a DeviceModel generator.
         """
 
         for dm in self.api.get_public_device_models():
@@ -119,24 +109,30 @@ class Client(object):
 
     def get_public_device_model_meanings(self):
         """
-        Returns a list of all device models meanings in the Relayr cloud.
+        Returns a generator over all device models meanings in the Relayr cloud.
 
         A device model meaning is a simple dictionary with a ``key`` and ``value``
         field like this:
 
+        This is slightly artificial as long as the called API method always
+        returns the entire list result and not a paginated one.
+
+        :rtype: a device model meaning (as a dictionary) generator.
+
         .. code-block:: python
 
             {'key': 'humidity', 'value': 'humidity'}
-
-        This is slightly artificial as long as the called API method always
-        returns the entire list result and not a paginated one.
         """
 
         for dmm in self.api.get_public_device_model_meanings():
             yield dmm
 
     def get_user(self):
-        """Returns the user belonging to this API client."""
+        """
+        Returns the Relayr user belonging to this API client.
+
+        :rtype: a User object.
+        """
         info = self.api.get_oauth2_user_info()
         usr = User(info['id'], client=self)
         for k in info:
@@ -144,12 +140,22 @@ class Client(object):
         return usr
 
     def get_app(self):
-        """Returns the application belonging to this API client."""
+        """
+        Returns the Relayr application belonging to this API client.
+
+        :rtype: an App object.
+        """
         info = self.api.get_oauth2_app_info()
         app = App(info['id'], client=self)
         app.get_info()
         return app
 
     def get_device(self, id):
-        """Returns the device with the given ID."""
+        """
+        Returns the device with the given ID.
+
+        :arg id: the unique ID for the desired device.
+        :type id: string
+        :rtype: a Device object.
+        """
         return Device(id=id, client=self)
