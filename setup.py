@@ -41,6 +41,7 @@ tests_require = [
     'requests>=1.0.0, <3.0.0',
 ]
 
+
 setup(
     name = "relayr",
     description = "Python client for Relayr API",
@@ -51,9 +52,10 @@ setup(
     author = "Relayr Team",
     author_email = "team@relayr.io",
     packages = ['relayr', 'relayr.utils'],
-    keywords = ['relayr', 'rest', 'api', 'python', 'client', 'iot', 'wunderbar'],
+    keywords = ['relayr', 'rest', 'api', 'cloud', 'python', 'client', 'iot',
+        'wunderbar'],
     classifiers = [
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
