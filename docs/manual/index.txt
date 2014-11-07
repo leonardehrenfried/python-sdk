@@ -3,17 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-The Relayr Python Client
+The Relayr Python Library
 ========================
 
-This is the documentation of the Python SDK for the Relayr API provided
-as a Python package named ``relayr`` (beta). It allows you to connect
-to the open sensors cloud of Internet of Things applications hosted by
-`Relayr.io <http://relayr.io>`_ and interact with applications and devices
-provided by yourself or others. 
+Welcome to the relayr Python Library. The repository provides you Python
+developers with programmatic access points to the relayr platform.
 
-See the `Relayr API Reference <http://docs.relayr.apiary.io/>`_ for the
-ultimate information about the Relayr API itself.
+These include access to the relayr cloud via the relayr API as well as 
+direct connection to the relayr WunderBar sensors, via Bluetooth Low
+Energy 
+
+See the `relayr API Reference <https://developer.relayr.io/dashboard/api/>`_ for 
+information about the relayr API.
 
 
 User's Guide
