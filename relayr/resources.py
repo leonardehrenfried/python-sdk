@@ -9,7 +9,7 @@ models and transmitters.
 
 
 from relayr import exceptions
-from relayr.dataconnection import PubnubDataConnection
+from relayr.dataconnection import Connection
 
 
 class User(object):
@@ -60,7 +60,7 @@ class User(object):
         "Open and return a connection to the data provider."
 
         creds = self.client.api.post_devices_supscription(device.id)
-        return PubnubDataConnection(callback, creds)
+        return Connection(callback, creds)
 
     def disconnect_device(self, id):
         # There is no disconnect in the API...
@@ -372,7 +372,7 @@ class Device(object):
 
         """
         creds = self.client.api.post_devices_supscription(self.id)
-        return PubnubDataConnection(callback, creds)
+        return Connection(callback, creds)
 
     def send_command(self, command, data):
         """

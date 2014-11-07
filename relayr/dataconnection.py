@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
-Data Connection
+Data Connection Classes
 
-Some initial code to provide connections for data hub(s).
+This module provide connection classes for accessing device data from data
+hub(s). Initially, this is PubNub.com, but MQTT will follow.
 """
 
 import time
 import threading
 
 from Pubnub import Pubnub
+
+from relayr import config
 
 
 class PubnubDataConnection(threading.Thread):
@@ -91,3 +94,9 @@ class MqttDataConnection(object):
 
     def unsubscribe(self, channel_name):
         raise NotImplementedError
+
+
+if config.dataConnectionHubName == 'PubNub':
+    Connection = PubnubDataConnection
+elif config.dataConnectionHubName == 'MQTT':
+    Connection = MqttDataConnection
