@@ -24,7 +24,7 @@ import re
 import sys
 import time
 
-import commands
+import commands ## FIXME: replace with subprocess
 import pexpect
 
 
