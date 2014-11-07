@@ -38,7 +38,7 @@ if PY_VERSION == 2:
         install_requires += f.read().strip().split('\n')
 
 tests_require = [
-    'requests>=1.0.0, <3.0.0',
+    # 'requests>=1.0.0, <3.0.0',
 ]
 
 
