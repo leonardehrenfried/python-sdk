@@ -24,7 +24,7 @@ class Client(object):
         info = c.get_oauth_user_info()
         usr = User(info['id'], client=c)
         devs = usr.get_devices()
-        d = devs.next()
+        d = next(devs)
         apps = usr.get_apps()
     """
     def __init__(self, token=None):
