@@ -5,12 +5,14 @@ Installation
 
 This part of the documentation covers the installation of the Relayr 
 client. The first step to using any software package is getting it 
-properly installed. For seasoned Python users or developers quite some
-information below will be already familiar.
+properly installed. Seasoned Python users or developers will likely
+be already familiar with much of the information below. Others are
+recommended to read it more carefully.
 
 
 Install the installer
 ----------------------
+
 The recommended installation tool for Python packages today is pip_.
 If you are not using it yet, please read its documentation and then 
 install it quickly like this for the Python version of your choice:
@@ -48,12 +50,13 @@ deactivate this environment as follows:
 .. code-block:: console
 
     $ source rvenv/bin/activate
-    (rvenv) $ # do some work... download, test, install...
+    (rvenv) $ # do some work... download, test, install, use...
     (rvenv) $ deactivate
     $ 
 
-Install a Relayr Client release
------------------------------------
+
+Install a release
+-----------------
 
 To install a release of the Relayr client from PyPI_ a single pip_ command will
 do. Inside a virtual Python environment this should be done after activating this
@@ -75,7 +78,8 @@ that see below). Just download a tarball of the sources and unpack as follows:
     $ cd relayr-0.2
     $ python setup.py install
 
-Install a Development Version
+
+Install a development version
 ------------------------------
 
 The Relayr client is actively developed on GitHub, where the code is
@@ -113,14 +117,12 @@ like this:
     Cleaning up...
     $ python setup.py install
 
-
 If you want to create the local documentation using Sphinx_ and/or run the
-test suite using pytest_ from tox_ please read the respective sections... 
-
+test suite using pytest_ please read the respective sections... 
 
 .. _pip: https://pip.pypa.io/
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
 .. _PyPI: https://pypi.python.org/
 .. _Sphinx: http://sphinx-doc.org/
 .. _tox: http://tox.readthedocs.org/en/latest/
-.. _pytest: http://pytest.org
+.. _pytest: http://pytest.org/

@@ -3,12 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-The Relayr Python API Client
-====================================================
+The Relayr Python Client
+========================
 
 This is the documentation of the Python SDK for the Relayr API provided
 as a Python package named ``relayr`` (beta). It allows you to connect
-to the cloud of Internet of Things applications hosted by
+to the open sensors cloud of Internet of Things applications hosted by
 `Relayr.io <http://relayr.io>`_ and interact with applications and devices
 provided by yourself or others. 
 
@@ -24,10 +24,9 @@ User's Guide
     installing
     testing
     examples
-    lowlevel
-    highlevel
-    exceptions
+    classes
     raspberrypi
+    documentation
     contributing
 
 

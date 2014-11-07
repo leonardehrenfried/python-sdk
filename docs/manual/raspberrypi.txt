@@ -4,19 +4,14 @@ Raspberry Pi
 ============
 
 Because of its small size, low price and power consumption and its general
-extensibility the Raspberry Pi (and, in fact, other similar devices) is
-considered to be an interesting platform for projects related to the Internet
-of Things. 
+extensibility the Raspberry Pi (or any other similar device) is considered
+as an interesting platform for projects related to the Internet of Things.
 
-.. note:: 
-    - Bluez
-    - PyBluez
-    - Python 3 issues
-    - access devices via BLE
+More to come...
 
 
-Update BlueZ
-------------
+Updating BlueZ
+--------------
 
 The version of BlueZ available for standard distributions for the Raspberry
 Pi like Raspbian can be pretty old (before version 5) and unable to handle

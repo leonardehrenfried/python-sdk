@@ -7,17 +7,17 @@ The following is a list of examples created with the existing Relayr API
 client. There is more to come... 
 
 
-``demos/api_check.py``
+``demos/api_pulse.py``
 -------------------------
 
 This script shows key public figures of the current Relayr API on the
-command-line. It does provide versioning invformation and makes a couple
+command-line. It does provide versioning information and makes a couple
 of public API calls to list current counts of publishers, applications,
 public devices and some more. A typical (slightly abbreviated) output
 will look something like this::
 
-	$ python demos/api_check.py 
-	Relayr API-Check
+	$ python demos/api_pulse.py
+	Relayr API Pulse
 	[...]
 	server status ok: True (0.42 s)
 	467 publishers (0.51 s)
@@ -51,10 +51,11 @@ To determine the number of publishers e.g. it runs code similar to this
 -------------------------
 
 This script establishes a connection to a Wunderbar microphone device, checks
-the incoming noise level value for some time, compares them to some maximum
+the incoming noise level values for some time, compares them to some maximum
 threshold and sends a reminder by email to take action if needed.
 
-Below you can see a version of that code stripped down to only a few lines:
+Below you can see a version of that code stripped down to only a few lines
+(without sending any notifications):
 
 .. code-block:: python
 
@@ -71,7 +72,7 @@ Below you can see a version of that code stripped down to only a few lines:
     conn.stop()
 
 When running (with the correct token and device ID) this should print incoming
-data from the microphone sensor like this:
+data from the microphone sensor with a time stamp and sound level like this:
 
 .. code-block:: console
 
