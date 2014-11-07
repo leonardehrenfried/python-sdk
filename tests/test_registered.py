@@ -159,21 +159,19 @@ class TestAPI(object):
 class TestClient(object):
     "Test high-level access via API client."
 
-    def test_public_resouces(self, fix_registered):
+    def test_public_resources(self, fix_registered):
         "Get public resources."
         from relayr import Client
         from relayr.resources import App, Publisher, Device, DeviceModel
         token = fix_registered.testset1['token']
         c = Client(token=token)
-        ## TODO: check why this needs a user
-        assert c.get_public_apps().next().__class__ == App
-        assert c.get_public_devices().next().__class__ == Device
-        assert c.get_public_device_models().next().__class__ == DeviceModel
-        assert c.get_public_publishers().next().__class__ == Publisher
+        assert next(c.get_public_apps()).__class__ == App
+        assert next(c.get_public_devices()).__class__ == Device
+        assert next(c.get_public_device_models()).__class__ == DeviceModel
+        assert next(c.get_public_publishers()).__class__ == Publisher
 
     def test_users_resources(self, fix_registered):
         "Test get user's resources."
-        # Fails with my own token.
         from relayr import Client
         from relayr.resources import User, Publisher, App, Device
         token = fix_registered.testset1['token']
@@ -181,9 +179,9 @@ class TestClient(object):
         usr = c.get_user()
         assert usr.__class__ == User
         assert c.get_app().__class__ == App
-        assert usr.get_apps().next().__class__ == App
-        assert usr.get_devices().next().__class__ == Device
-        assert usr.get_publishers().next().__class__ == Publisher
+        assert next(usr.get_apps()).__class__ == App
+        assert next(usr.get_devices()).__class__ == Device
+        assert next(usr.get_publishers()).__class__ == Publisher
 
     def test_user_name(self, fix_registered):
         "Test get name attribute of User object for connected user."
@@ -192,7 +190,6 @@ class TestClient(object):
         c = Client(token=token)
         usr = c.get_user()
         assert usr.name == fix_registered.testset1['userName']
-        # usr.update(name='dcg') # The supplied authentication is not authorized to access this resource.
 
     def test4(self, fix_registered):
         "Test get publishers for connected user."
@@ -221,11 +218,12 @@ class TestClient(object):
         dev = Device(id=deviceID, client=c)
         dev.get_info()
         dev.send_command('led', {'cmd': 1})
+        # Eye-ball test, since reading the LED status is not yet implemented
+        # in the firmware.
 
     # @pytest.xfail("no api method?")
     def test_publish_device(self):
         "Test make a device public/private."
-        # How to do that with the current API?
 
     def test_get_wunderbar_devices(self, fix_registered):
         "Test get user's registered wunderbar devices and master."
@@ -280,37 +278,6 @@ class TestApps(object):
         # update name to previous name
         app.update(name=initial_app_name)        
         assert app.name == initial_app_name
-
-
-from relayr.compat import PY3
-
-class TestPubNub(object):
-    "Test accessing device data via a PubNub connection."
-
-    def receive(self, message, channel):
-        "Callback method for data connection."
-        print(message) # suppressed by py.test
-        self.received_data.append(message)
-
-    # @pytest.mark.skipif(PY3, reason="not working on Python 3")
-    def test_read_device_connection_10s(self, fix_registered):
-        "Test connect to a device and read data from for some time."
-        import time
-        from relayr import Client
-        from relayr.resources import Device
-        token = fix_registered.testset1['token']
-        deviceID = fix_registered.testset1['deviceID']
-        self.received_data = []
-        c = Client(token=token)
-        dev = Device(id=deviceID, client=c).get_info()
-        usr = c.get_user()
-        conn = usr.connect_device(dev, self.receive)
-        conn.start()
-        time.sleep(10)
-        conn.stop()
-        assert len(self.received_data) > 0
-        for item in self.received_data:
-            assert 'ts' in item
 
 
 class TestWunderbar(object):

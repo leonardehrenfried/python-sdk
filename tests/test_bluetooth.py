@@ -8,7 +8,7 @@ Some of these test need root permissions, see docstrings below.
 """
 
 import sys
-import commands
+import subprocess
 
 import pytest
 try:
@@ -19,8 +19,7 @@ except NotImplementedError:
 
 
 ON_LINUX = sys.platform.startswith("linux")
-HAVE_BLUEZ = commands.getoutput('which hcitool') != ''
-
+HAVE_BLUEZ = subprocess.Popen(['which', 'hcitool']).stdout != ''
 
 @pytest.mark.skipif(not HAVE_BLUETOOTH, reason="requires working bluetooth package")
 @pytest.mark.skipif(not ON_LINUX, reason="requires Linux")
