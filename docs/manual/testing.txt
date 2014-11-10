@@ -4,7 +4,7 @@ Testing
 The source code distribution of the relayr Python library contains a testsuite
 that can be run after downloading the full code archive. It is not installed
 together with the Python package itself, but needs to be run from the unarchived
-code distribution. This has been tes on Linued on Linux and OS X.
+code distribution. This has been tesed on Linux and OS X.
 
 The test suite is located inside the ``tests`` subdirectory
 and can be run using PyTest_ which, unlike the ``unittest`` framework,
