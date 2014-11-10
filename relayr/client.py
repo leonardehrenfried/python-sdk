@@ -13,7 +13,7 @@ from relayr.resources import User, App, Device, DeviceModel, Transmitter, Publis
 
 class Client(object):
     """
-    Relayr client that provides a higher level interface to the Relayr cloud.
+    A client providing a higher level interface to the relayr cloud platform.
 
     Example:
 
@@ -28,7 +28,7 @@ class Client(object):
     """
     def __init__(self, token=None):
         """
-        :arg token: A token generated on the Relayr site for a combination of
+        :arg token: A token generated on the relayr site for the combination of
             a user and an application.
         :type token: A string.
         """
@@ -37,10 +37,10 @@ class Client(object):
 
     def get_public_apps(self):
         """
-        Returns a generator over all apps in the Relayr cloud.
+        Returns a generator for all apps on the relayr platform.
 
         This is slightly artificial as long as the called API method always
-        returns the entire list result and not a paginated one.
+        returns the entire results list and not a paginated one.
 
         :rtype: A generator for :py:class:`relayr.resources.App` objects.
 
@@ -59,10 +59,10 @@ class Client(object):
 
     def get_public_publishers(self):
         """
-        Returns a generator over all publishers in the Relayr cloud.
+        Returns a generator for all publishers on the relayr platform.
 
         This is slightly artificial as long as the called API method always
-        returns the entire list result and not a paginated one.
+        returns the entire results list and not a paginated one.
 
         :rtype: A generator for :py:class:`relayr.resources.Publisher` objects.
         """
@@ -76,12 +76,12 @@ class Client(object):
 
     def get_public_devices(self, meaning=''):
         """
-        Returns a generator over all devices in the Relayr cloud.
+        Returns a generator for all devices on the relayr platform.
 
         This is slightly artificial as long as the called API method always
-        returns the entire list result and not a paginated one.
+        returns the entire results list and not a paginated one.
 
-        :arg meaning: The *meaning* for the desired devices.
+        :arg meaning: The *meaning* (type) of the desired devices.
         :type meaning: string
         :rtype: A generator for :py:class:`relayr.resources.Device` objects.
         """
@@ -93,10 +93,10 @@ class Client(object):
 
     def get_public_device_models(self):
         """
-        Returns a generator over all device models in the Relayr cloud.
+        Returns a generator for all device models on the relayr platform.
 
-        This is slightly artificial as long as the called API method always
-        returns the entire list result and not a paginated one.
+        This is slightly artificial, as long as the called API method always
+        returns the entire results list and not a paginated one.
 
         :rtype: A generator for :py:class:`relayr.resources.DeviceModel` objects.
         """
@@ -108,14 +108,14 @@ class Client(object):
 
     def get_public_device_model_meanings(self):
         """
-        Returns a generator over all device models meanings in the Relayr cloud.
+        Returns a generator for all device models' meanings on the relayr platform.
 
         A device model meaning is a simple dictionary with a ``key`` and ``value``
-        field like this:
+        field.
 
         This is slightly artificial as long as the called API method always
-        returns the entire list result and not a paginated one.
-
+        returns the entire results list and not a paginated one.
+        
         :rtype: A device model meaning (as a dictionary) generator.
 
         .. code-block:: python
@@ -128,7 +128,7 @@ class Client(object):
 
     def get_user(self):
         """
-        Returns the Relayr user belonging to this API client.
+        Returns the relayr user owning the API client.
 
         :rtype: A :py:class:`relayr.resources.User` object.
         """
@@ -140,7 +140,7 @@ class Client(object):
 
     def get_app(self):
         """
-        Returns the Relayr application belonging to this API client.
+        Returns the relayr application of the API client.
 
         :rtype: A :py:class:`relayr.resources.App` object.
         """
@@ -151,7 +151,7 @@ class Client(object):
 
     def get_device(self, id):
         """
-        Returns the device with the given ID.
+        Returns the device with the specified ID.
 
         :arg id: the unique ID for the desired device.
         :type id: string
