@@ -3,17 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-The Relayr Python Client
+The relayr Python Library Documentation
 ========================
 
-This is the documentation of the Python SDK for the Relayr API provided
-as a Python package named ``relayr`` (beta). It allows you to connect
-to the open sensors cloud of Internet of Things applications hosted by
-`Relayr.io <http://relayr.io>`_ and interact with applications and devices
-provided by yourself or others. 
+Welcome to the relayr Python Library Documentation Reference. 
+Here you will find the full reference to the classes included in the library, code samples
+as well as examples which will assist you in getting started with your own relayr Python projects.
 
-See the `Relayr API Reference <http://docs.relayr.apiary.io/>`_ for the
-ultimate information about the Relayr API itself.
+See the full `relayr API Reference <https://developer.relayr.io/dashboard/api/>`_ for 
+information about the relayr API.
 
 
 User's Guide

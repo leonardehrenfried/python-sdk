@@ -5,7 +5,7 @@ Contributions are highly welcome and much appreciated, so please do not
 hesitate! Apart from bug reports we also welcome little self-contained
 examples that you might find helpful for others.
 
-The various SDKs for the Relyr API are still being actively developped.
+The various relay SDKs are still being developped.
 You can find the code of the
 `Python-SDK on GitHub <https://github.com/relayr/python-sdk/>`_
 which is also the place for reporting any bugs and/or patches (the latter
@@ -13,9 +13,9 @@ preferably in the form of a pull request). If you report a bug please
 make sure to include information about your OS platform and Python version.
 
 On GitHub you can also find SDKs in other repositories for other languages
-or platforms like `iOS and Mac <https://github.com/relayr/apple-sdk/>`_
+or platforms such as `iOS and Mac <https://github.com/relayr/apple-sdk/>`_
 and `Android <https://github.com/relayr/android-sdk>`_.
 
-If you have more general questions it is recommended to pose them on the 
-`Relayr Forum <https://forum.relayr.io/>`_ where the Relayr team will
-respond to them in a timely manner.
+If you have more general questions you are more than welcomed to post them on the 
+`relayr Forum <https://forum.relayr.io/>`_ 
+

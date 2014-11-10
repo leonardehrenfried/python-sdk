@@ -3,17 +3,16 @@
 Examples
 ============
 
-The following is a list of examples created with the existing Relayr API
-client. There is more to come... 
+The following is a list of examples created with the existing relayr API.  
 
 
 ``demos/api_pulse.py``
 -------------------------
 
-This script shows key public figures of the current Relayr API on the
+This script shows key entities of the current relayr API on the
 command-line. It does provide versioning information and makes a couple
-of public API calls to list current counts of publishers, applications,
-public devices and some more. A typical (slightly abbreviated) output
+of API calls to list current counts of publishers, applications,
+public devices and more. A typical (slightly abbreviated) output
 will look something like this::
 
 	$ python demos/api_pulse.py
@@ -51,11 +50,11 @@ To determine the number of publishers e.g. it runs code similar to this
 -------------------------
 
 This script establishes a connection to a Wunderbar microphone device, checks
-the incoming noise level values for some time, compares them to some maximum
-threshold and sends a reminder by email to take action if needed.
+the incoming noise level values for some time, compares them to a maximum
+threshold and sends a reminder, by email, to take action if needed.
 
 Below you can see a version of that code stripped down to only a few lines
-(without sending any notifications):
+(omitting the email notification part):
 
 .. code-block:: python
 
