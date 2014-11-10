@@ -1,0 +1,19 @@
+Documentation 
+=============
+
+The official documentation (manual) of the Relayr Python Client is hosted on
+ReadTheDocs_. It is also included inside the ``docs/manual`` subdirectory of
+the source code distribution. You can render it in various formats using
+Sphinx_ called from a little Bash script named ``make_docs.sh`` inside the
+root directory of the unarchived source code.
+
+.. code-block:: console
+
+    $ ./make_docs.sh
+
+By default this renders only the HTML version in ``docs/manual/_build/html``,
+but if you uncomment the respective lines inside you can also render versions
+in EPUB and PDF format. For PDF you need to have a working LaTeX installation.
+
+.. _Sphinx: http://sphinx-doc.org/
+.. _ReadTheDocs: http://relayr.readthedocs.org/
