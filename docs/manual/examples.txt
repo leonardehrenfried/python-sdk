@@ -71,7 +71,7 @@ Below you can see a version of that code stripped down to only a few lines
     conn.stop()
 
 When running (with the correct token and device ID) this should print incoming
-data from the microphone sensor with a time stamp and sound level like this:
+data from the microphone sensor with a time stamp and sound level in this manner:
 
 .. code-block:: console
 
