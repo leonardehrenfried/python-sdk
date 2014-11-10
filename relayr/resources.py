@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-This module contains abstractions for Relayr API resources.
+This module contains abstractions for relayr API resources.
 
-Resources right now can be users, publishers, applications, devices, device
-models and transmitters.
+Resources may be entities such as users, publishers, applications, 
+devices, device models and transmitters.
 """
 
 
@@ -32,7 +32,7 @@ class User(object):
             yield p
 
     def get_apps(self):
-        "Return a generator of the apps of the user."
+        "Returns a generator of the apps of the user."
 
         for app_json in self.client.api.get_user_apps(self.id):
             ## TODO: change 'app' field to 'id' in API?
@@ -41,7 +41,7 @@ class User(object):
             yield app
 
     def get_transmitters(self):
-        "Return a generator of the transmitters of the user."
+        "Returns a generator of the transmitters of the user."
 
         for trans_json in self.client.api.get_user_transmitters(self.id):
             trans = Transmitter(trans_json['id'], client=self.client)
@@ -49,7 +49,7 @@ class User(object):
             yield trans
 
     def get_devices(self):
-        "Return a generator of the devices of the user."
+        "Returns a generator of the devices of the user."
 
         for dev_json in self.client.api.get_user_devices(self.id):
             dev = Device(dev_json['id'], client=self.client)
@@ -57,7 +57,7 @@ class User(object):
             yield dev
 
     def connect_device(self, device, callback):
-        "Open and return a connection to the data provider."
+        "Opens and returns a connection to the data provider."
 
         creds = self.client.api.post_devices_supscription(device.id)
         return Connection(callback, creds)
@@ -75,7 +75,7 @@ class User(object):
     ## TODO: rename to 'registered_wunderbar_devices'?
     def register_wunderbar(self):
         """
-        Return registered Wunderbar devices (master and sensor modules).
+        Returns registered Wunderbar devices (master and sensor modules).
     
         :rtype: A generator over the registered devices and one transmitter.
         """    
@@ -91,14 +91,14 @@ class User(object):
 
     def remove_wunderbar(self):
         """
-        Remove all Wunderbars associated with this user.
+        Removes all Wunderbars associated with the user.
         """
         res = self.client.api.post_users_destroy(self.id)
         return res
 
     def get_bookmarked_devices(self):
         """
-        Get a list of bookmarked devices.
+        Retrieves a list of bookmarked devices.
 
         :rtype: list of device objects
         """
@@ -120,11 +120,11 @@ class User(object):
 
 class Publisher(object):
     """
-    A Relayr publisher.
+    A relayr publisher.
 
     A publisher has a few attributes, which can be updated. It can be
-    registered to and deleted from the Relayr cloud. And it lists all
-    applications it has published in the Relayr cloud.
+    registered to and deleted from the relayr platform. It can list all
+    applications it has published on the relayr platform.
     """
 
     def __init__(self, id=None, client=None):
@@ -139,8 +139,8 @@ class Publisher(object):
         Get list of apps for this publisher.
 
         If the optional parameter ``extended`` is ``False`` (default) the 
-        resulting apps will contain only the fields ``id``, ``name`` and 
-        ``description``. If it is ``True`` there will be these additional 
+        response will contain only the fields ``id``, ``name`` and 
+        ``description``. If it is ``True`` it will contain additional 
         fields: ``publisher``, ``clientId``, ``clientSecret`` and
         ``redirectUri``.
 
@@ -156,7 +156,7 @@ class Publisher(object):
 
     def update(self, name=None):
         """
-        Update certain information fields of the publishers.
+        Updates certain information fields of the publisher's.
         
         :param name: the user email to be set
         :type name: string
@@ -168,7 +168,7 @@ class Publisher(object):
 
     def register(self, name, id, publisher):
         """
-        Add this publisher to the relayr repository.
+        Adds the publisher to the relayr platform.
 
         :param name: the publisher name to be set
         :type name: string
@@ -179,17 +179,17 @@ class Publisher(object):
 
     def delete(self):
         """
-        Delete this publisher from the Relayr Cloud.
+        Deletes the publisher from the relayr platform.
         """
         res = self.api.delete_publisher(self.id)
 
 
 class App(object):
     """
-    A Relayr application.
+    A relayr application.
     
     An application has a few attributes, which can be updated. It can be
-    registered to and deleted from the Relayr cloud. And it can be connected 
+    registered to and deleted from the relayr platform. it can be connected 
     to and disconnected from devices.
     """
     
@@ -206,7 +206,7 @@ class App(object):
         
         If the optional parameter ``extended`` is ``False`` (default) the 
         result will contain only the fields ``id``, ``name`` and 
-        ``description``. If it is ``True`` there will be these additional 
+        ``description``. If it is ``True`` it will contain additional 
         fields: ``publisher``, ``clientId``, ``clientSecret`` and
         ``redirectUri``.
         
@@ -225,7 +225,7 @@ class App(object):
 
     def update(self, description=None, name=None, redirectUri=None):
         """
-        Update certain fields in the application description.
+        Updates certain fields in the application's description.
         
         :param description: the user name to be set
         :type description: string
@@ -242,13 +242,13 @@ class App(object):
 
     def delete(self):
         """
-        Delete this app from the Relayr Cloud.
+        Deletes the app from the relayr platform.
         """
         res = self.api.delete_publisher(self.id)
 
     def register(self, name, publisher):
         """
-        Add this app to the relayr repository.
+        Adds the app to the relayr platform.
 
         :param name: the app name to be set
         :type name: string
@@ -259,11 +259,11 @@ class App(object):
 
     def connect_to_device(self, device):
         """
-        Connects this app to a device.
+        Connects the app to a device.
         
-        PubNub credentials are returned as part of the response.
+        Data reception credentials are returned as part of the response.
 
-        There is also an Device.connect_to_device() method...
+        See also the Device.connect_to_device() method...
 
         :param device: the device (name) to be connected
         :type device: string(?)
@@ -272,9 +272,9 @@ class App(object):
 
     def disconnect_from_device(self, device):
         """
-        Disonnect this app from a device.
+        Disonnects the app from a device.
 
-        There is also an Device.disconnect_from_app() method...
+        See also the Device.disconnect_from_app() method...
 
         :param device: the device (name) to be disconnected from
         :type device: string(?)
@@ -284,7 +284,7 @@ class App(object):
 
 class Device(object):
     """
-    A Relayr device.
+    A relayr device.
     """
 
     def __init__(self, id=None, client=None):
@@ -296,7 +296,7 @@ class Device(object):
 
     def get_info(self):
         """
-        Get device info and store as instance attributes.
+        Retrieves device info and stores it as instance attributes.
 
         :rtype: self.
         """
@@ -312,7 +312,7 @@ class Device(object):
 
     def update(self, description=None, name=None, model=None, public=None):
         """
-        Update certain fields in the device description.
+        Updates certain fields in the device description.
         
         :param description: the description to be set
         :type description: string
@@ -331,7 +331,7 @@ class Device(object):
 
     def get_connected_apps(self):
         """
-        Get all apps connected to this device.
+        Retrieves all apps connected to the device.
         
         :rtype: A list of apps.
         """
@@ -341,11 +341,11 @@ class Device(object):
 
     def connect_to_app(self, app):
         """
-        Connect this device to an app.
+        Connects the device to an app.
         
-        PubNub credentials are returned as part of the response.
+        Data reception credentials are returned as part of the response.
 
-        There is also an App.connect_to_device() method...
+        See also the App.connect_to_device() method...
 
         :param app: the app (name) to be connected
         :type app: string(?)
@@ -354,9 +354,9 @@ class Device(object):
 
     def disconnect_from_app(self, app):
         """
-        Disconnect this device from an app.
+        Disconnects the device from an app.
 
-        There is also an App.disconnect_from_device() method...
+        See also the App.disconnect_from_device() method...
 
         :param app: the app (name) to be disconnected from
         :type app: string(?)
@@ -365,7 +365,7 @@ class Device(object):
 
     def connect_to_public_device(self, id, callback):
         """
-        Subscribe a user to a public device.
+        Subscribes a user to a public device.
 
         :param id: the device's UID
         :type id: string
@@ -376,7 +376,7 @@ class Device(object):
 
     def send_command(self, command, data):
         """
-        Send a command to this device.
+        Sends a command to the device.
 
         :param command: the command to be sent
         :type command: string
@@ -389,7 +389,7 @@ class Device(object):
 
     def delete(self):
         """
-        Delete this device from the Relayr cloud.
+        Deletes the device from the relayr platform.
 
         :type command: self
         """
@@ -399,7 +399,7 @@ class Device(object):
 
     def switch_led_on(self, bool=True):
         """
-        Switch on device's LED for ca. 10 seconds or switch it off now.
+        Switches on device's LED for ca. 10 seconds or switches it off.
 
         :param bool: the desired state, on if True (default), off if False
         :type bool: boolean
@@ -410,7 +410,7 @@ class Device(object):
 
 class DeviceModel(object):
     """
-    Relayr device model.
+    relayr device model.
     """
     
     def __init__(self, id=None, client=None):
@@ -422,7 +422,7 @@ class DeviceModel(object):
 
     def get_info(self):
         """
-        Get device model info and store as instance attributes.
+        Returns device model info and stores it as instance attributes.
         
         :rtype: self.
         """
@@ -433,7 +433,7 @@ class DeviceModel(object):
 
 
 class Transmitter(object):
-    "A Relayr transmitter, like a Wunderbar."
+    "A relayr transmitter, The Master Module, for example."
     
     def __init__(self, id=None, client=None):
         self.id = id
@@ -445,7 +445,7 @@ class Transmitter(object):
 
     def get_info(self):
         """
-        Get transmitter info.
+        Retrieves transmitter info.
         """
         res = self.client.api.get_transmitter(self.id)
         for k, v in res.items():
@@ -454,7 +454,7 @@ class Transmitter(object):
 
     def delete(self):
         """
-        Delete this transmitter from the Relayr cloud.
+        Deletes the transmitter from the relayr platform.
 
         :type command: self
         """
@@ -464,7 +464,7 @@ class Transmitter(object):
 
     def update(self, name=None):
         """
-        Set transmitter info.
+        Updates transmitter info.
         """
         res = self.client.api.patch_transmitter(self.id, name=name)
         for k, v in res.items():
@@ -473,7 +473,7 @@ class Transmitter(object):
 
     def get_connected_devices(self):
         """
-        Return a list of devices connected to this specific transmitter.
+        Returns a list of devices connected to the specific transmitter.
         
         :rtype: A list of devices.
         """
