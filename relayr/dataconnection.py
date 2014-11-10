@@ -3,8 +3,7 @@
 """
 Data Connection Classes
 
-This module provide connection classes for accessing device data from data
-hub(s). Initially, this is PubNub.com, but MQTT will follow.
+This module provide connection classes for accessing device data.
 """
 
 import time
@@ -16,11 +15,11 @@ from relayr import config
 
 
 class PubnubDataConnection(threading.Thread):
-    "A connection to a PubNub data hub running in its own thread."
+    "A connection to a PubNub data hub running on its own thread."
     
     def __init__(self, callback, credentials):
         """
-        Open a PubNub connection with a callback and a credentials dict.
+        Opens a PubNub connection with a callback and a credentials dict.
 
         :param callback: A callable to be called with two arguments: 
             message_content and channel_name.
@@ -61,7 +60,7 @@ class PubnubDataConnection(threading.Thread):
 
     def subscribe(self, channel_name, callback):
         """
-        Subscribe a callable to a channel with given name.
+        Subscribes a callable to a channel with the given name.
 
         :param channel_name: The channel name.
         :type channel_name: string
@@ -74,7 +73,7 @@ class PubnubDataConnection(threading.Thread):
 
     def unsubscribe(self, channel_name):
         """
-        Unsubscribe from a channel with given name.
+        Unsubscribes from a channel with given name.
 
         :param channel_name: the channel name
         :type channel_name: string
