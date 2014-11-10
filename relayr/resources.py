@@ -100,7 +100,7 @@ class User(object):
         """
         Get a list of bookmarked devices.
 
-        :rtype command: list of device objects
+        :rtype: list of device objects
         """
         res = self.client.api.get_user_devices_bookmarks(self.id)
         for dev in res:
@@ -122,8 +122,8 @@ class Publisher(object):
     """
     A Relayr publisher.
 
-    A publisher has a few attributes, which can be chaged. It can be
-    registered to and deleted from the Relayr cloud. And it list all 
+    A publisher has a few attributes, which can be updated. It can be
+    registered to and deleted from the Relayr cloud. And it lists all
     applications it has published in the Relayr cloud.
     """
 
@@ -144,7 +144,7 @@ class Publisher(object):
         fields: ``publisher``, ``clientId``, ``clientSecret`` and
         ``redirectUri``.
 
-        :param extended: flag indicating if the info should be extended
+        :param extended: Flag indicating if the info should be extended.
         :type extended: booloean
         :rtype: A list of dicts representing apps.
         """
@@ -188,7 +188,7 @@ class App(object):
     """
     A Relayr application.
     
-    An application has a few attributes, which can be changed. It can be
+    An application has a few attributes, which can be updated. It can be
     registered to and deleted from the Relayr cloud. And it can be connected 
     to and disconnected from devices.
     """

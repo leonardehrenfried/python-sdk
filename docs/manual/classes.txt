@@ -1,0 +1,48 @@
+.. _classes:
+
+Classes
+============
+
+
+API Layer
+---------
+
+.. automodule:: relayr.api
+   :members:
+   :undoc-members:
+   :special-members: __init__
+
+
+API Client
+----------
+
+.. automodule:: relayr.client
+   :members:
+   :undoc-members:
+   :special-members: __init__
+
+
+API Resources
+-------------
+
+.. automodule:: relayr.resources
+   :members:
+   :undoc-members:
+   :special-members: __init__
+
+
+Data Access
+-----------
+
+.. automodule:: relayr.dataconnection
+   :members:
+   :undoc-members:
+   :special-members: __init__
+
+
+Exceptions
+----------
+
+.. automodule:: relayr.exceptions
+   :members:
+   :undoc-members:
