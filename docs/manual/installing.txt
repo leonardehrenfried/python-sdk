@@ -3,37 +3,34 @@
 Installation
 ============
 
-This part of the documentation covers the installation of the Relayr 
-client. The first step to using any software package is getting it 
-properly installed. Seasoned Python users or developers will likely
-be already familiar with much of the information below. Others are
-recommended to read it more carefully.
+This part of the documentation covers the installation of the relayr 
+library. If you are an experienced Python user or developer you will likely
+already be familiar with much of the information below. In case you are not you may find
+the below information useful.
 
 
-Install the installer
+Installing the installer
 ----------------------
 
-The recommended installation tool for Python packages today is pip_.
-If you are not using it yet, please read its documentation and then 
-install it quickly like this for the Python version of your choice:
+The recommended installation tool for Python packages today is `pip_`.
 
 .. code-block:: console
 
     $ wget https://bootstrap.pypa.io/get-pip.py
     $ python get-pip.py
 
-Using ``easy_install`` from setuptools_ is deprecated for `various reasons 
+Using ``easy_install`` from setuptools_ is deprecated for `various reasons
 <http://stackoverflow.com/questions/3220404/why-use-pip-over-easy-install>`_ 
-and `some more 
+see also `here 
 <https://python-packaging-user-guide.readthedocs.org/en/latest/technical.html#pip-vs-easy-install>`_.
 
 
-Create a virtual environment
+Creating a virtual environment
 -----------------------------
 
-If you want to be on the safe side and not risk the integrity of your existing
-Python installation you may want to consider creating a virtual Python environment
-(a ``virtualenv`` for short) in which to build and install the Relayr client:
+In order not to risk the existing
+Python installation we recommend creating a virtual Python environment
+(a ``virtualenv`) in which you can install the relayr library:
 
 .. code-block:: console
 
@@ -43,9 +40,9 @@ Python installation you may want to consider creating a virtual Python environme
     $ 
 
 If ``virtualenv`` is not already installed on your system, you can install it
-with ``pip install virtualenv``, too. The above lines will create a subfolder
+with ``pip install virtualenv``. The above lines will create a subfolder
 named ``rvenv`` containing a separate Python installation. You can activate and
-deactivate this environment as follows:
+deactivate this environment using the following:
 
 .. code-block:: console
 
@@ -55,11 +52,11 @@ deactivate this environment as follows:
     $ 
 
 
-Install a release
+Installing a release
 -----------------
 
-To install a release of the Relayr client from PyPI_ a single pip_ command will
-do. Inside a virtual Python environment this should be done after activating this
+You are able to install a release of the relayr library from PyPI_ with a single pip_ command. 
+Inside a virtual Python environment this should be done after activating that
 environment first (at the point of ``# do some work...`` in the previous section
 above). This will install the latest version:
 
@@ -68,7 +65,7 @@ above). This will install the latest version:
     $ pip install relayr
 
 You can also run a source distribution of a release from PyPI_ if you want to
-run the test suite and/or generate the documentation yourself, say (more about
+run the test suite and/or generate the documentation yourself (more about
 that see below). Just download a tarball of the sources and unpack as follows:
 
 .. code-block:: console
@@ -79,16 +76,15 @@ that see below). Just download a tarball of the sources and unpack as follows:
     $ python setup.py install
 
 
-Install a development version
+Installing a development version
 ------------------------------
 
-The Relayr client is actively developed on GitHub, where the code is
-`always available
-<https://github.com/relayr/python-sdk>`_. If you want to work with the
-development version of Relayr, there are two ways (again, both recommended
-in a virteual environment). 
+The relayr library is hosted and developed on `GitHub
+<https://github.com/relayr/python-sdk>`_. If you wish to work with the
+development version of relayr, there are two ways (again, both recommended
+for a virtual environment). 
 
-Checkout from repository with git
+1. Checking out from the repository with git
 ...................................
 
 You can operate on a ``git`` checkout. This will pull in the dependencies and
@@ -104,11 +100,10 @@ before installing the package itself:
     $ git pull origin
     $ python setup.py install
 
-Download from repository with pip
+2. Downloading  the repository with pip
 ...................................
 
-Or you let ``pip`` itself pull in the development version without git instead,
-like this:
+You could also let ``pip`` itself pull in the development version without git:
 
 .. code-block:: console
 
@@ -118,7 +113,7 @@ like this:
     $ python setup.py install
 
 If you want to create the local documentation using Sphinx_ and/or run the
-test suite using pytest_ please read the respective sections... 
+test suite using pytest_ please read the respective sections.
 
 .. _pip: https://pip.pypa.io/
 .. _setuptools: https://pypi.python.org/pypi/setuptools/
