@@ -10,7 +10,7 @@ the below information useful.
 
 
 Installing the installer
-----------------------
+------------------------
 
 The recommended installation tool for Python packages today is `pip_`.
 
@@ -26,11 +26,11 @@ see also `here
 
 
 Creating a virtual environment
------------------------------
+------------------------------
 
 In order not to risk the existing
 Python installation we recommend creating a virtual Python environment
-(a ``virtualenv`) in which you can install the relayr library:
+(a ``virtualenv``) in which you can install the relayr library:
 
 .. code-block:: console
 
@@ -53,7 +53,7 @@ deactivate this environment using the following:
 
 
 Installing a release
------------------
+--------------------
 
 You are able to install a release of the relayr library from PyPI_ with a single pip_ command. 
 Inside a virtual Python environment this should be done after activating that
@@ -77,7 +77,7 @@ that see below). Just download a tarball of the sources and unpack as follows:
 
 
 Installing a development version
-------------------------------
+--------------------------------
 
 The relayr library is hosted and developed on `GitHub
 <https://github.com/relayr/python-sdk>`_. If you wish to work with the
@@ -85,7 +85,7 @@ development version of relayr, there are two ways (again, both recommended
 for a virtual environment). 
 
 1. Checking out from the repository with git
-...................................
+............................................
 
 You can operate on a ``git`` checkout. This will pull in the dependencies and
 activate the ``git`` head as the current version inside the virtualenv. Then all 
@@ -101,7 +101,7 @@ before installing the package itself:
     $ python setup.py install
 
 2. Downloading  the repository with pip
-...................................
+.......................................
 
 You could also let ``pip`` itself pull in the development version without git:
 

@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 The relayr Python Library Documentation
-========================
+=======================================
 
 Welcome to the relayr Python Library Documentation Reference. 
 Here you will find the full reference to the classes included in the library, code samples
