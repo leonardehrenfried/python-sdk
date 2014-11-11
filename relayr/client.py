@@ -41,7 +41,7 @@ class Client(object):
 
         A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
-        The generator allows for easier iteration through the results list.
+        
 
         :rtype: A generator for :py:class:`relayr.resources.App` objects.
 
@@ -64,7 +64,7 @@ class Client(object):
 
         A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
-        The generator allows for easier iteration through the results list.
+        
 
         :rtype: A generator for :py:class:`relayr.resources.Publisher` objects.
         """
@@ -82,7 +82,7 @@ class Client(object):
 
         A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
-        The generator allows for easier iteration through the results list.
+        
 
         :arg meaning: The *meaning* (type) of the desired devices.
         :type meaning: string
@@ -100,7 +100,7 @@ class Client(object):
 
         A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
-        The generator allows for easier iteration through the results list.
+        
 
         :rtype: A generator for :py:class:`relayr.resources.DeviceModel` objects.
         """
@@ -119,7 +119,7 @@ class Client(object):
 
         A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
-        The generator allows for easier iteration through the results list.
+        
         
         :rtype: A device model meaning (as a dictionary) generator.
 
