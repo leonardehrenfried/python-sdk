@@ -18,5 +18,5 @@ On GitHub you can also find SDKs in other repositories for other languages
 or platforms such as `iOS and Mac <https://github.com/relayr/apple-sdk/>`_
 and `Android <https://github.com/relayr/android-sdk>`_.
 
-If you have more general questions you are more than welcomed to post them on the 
+If you have more general questions you are more than welcome to post them on the
 `relayr Forum <https://forum.relayr.io/>`_ 
