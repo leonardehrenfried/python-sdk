@@ -3,12 +3,12 @@
 """
 Functionality for working with Bluetooth, especially LE (Low Energy).
 
-Since PyBluez doesn't support Bluetooth LE this module provides an abstraction
-on the tools ``hcitool`` and ``gatttool``.
+Since PyBluez doesn't support Bluetooth LE yet this module provides an
+abstraction on the tools ``hcitool`` and ``gatttool``.
 
 This module needs to be run with root permisions.
 
-Examples:
+Example:
 
 .. code-block:: python
 
@@ -23,8 +23,9 @@ Examples:
 import re
 import sys
 import time
+import shlex
+import subprocess
 
-import commands ## FIXME: replace with subprocess
 import pexpect
 
 
@@ -93,7 +94,6 @@ def scan_ble_devices(hci_name='hci0', name_filter='.*', timeout=1):
     conn = pexpect.spawn('hciconfig %s reset' % hci_name) # needs sudo
     time.sleep(0.2)
 
-    # This doesn't work using the 'commands' package:
     conn = pexpect.spawn('timeout %d hcitool lescan' % timeout) # needs sudo
     time.sleep(0.2)
 
@@ -150,7 +150,8 @@ class GattDevice(object):
 
         # example line format:
         # 'attr handle = 0x0001, end grp handle = 0x0007 uuid: 00001800-0000-1000-8000-00805f9b34fb'
-        res = commands.getoutput('gatttool -t random -b %s --primary' % self.addr)        
+        cmd = 'gatttool -t random -b %s --primary' % self.addr
+        res = subprocess.check_output(shlex.split(cmd))
         lines = re.split('\r?\n', res)
         lines = sorted(set(lines))
         self.data['services'] = lines
@@ -171,7 +172,7 @@ class GattDevice(object):
         cmd = 'gatttool -t random -b %s --characteristics' % self.addr
         if uuid:
             cmd += ' --uuid=%s' % uuid
-        res = commands.getoutput(cmd)
+        res = subprocess.check_output(shlex.split(cmd))
         lines = re.split('\r?\n', res)
         pat = '^handle\s*=\s*(?P<name_handle>0x[0-9a-fA-F]{4}),\s*char\s*properties\s*=\s*(?P<properties>0x[0-9a-fA-F]+),\s*char\s*value\s*handle\s*=\s*(?P<value_handle>0x[0-9a-fA-F]{4}),\s*uuid\s*=\s*(?P<uuid>[0-9a-fA-F\-]+)'
         lines = [re.match(pat, line).groupdict() for line in lines]
@@ -189,7 +190,8 @@ class GattDevice(object):
 
         # example line format:
         # 'handle = 0x000e, uuid = 00002010-0000-1000-8000-00805f9b34fb'
-        res = commands.getoutput('gatttool -t random -b %s --char-desc' % self.addr)
+        cmd = 'gatttool -t random -b %s --char-desc' % self.addr
+        res = subprocess.check_output(shlex.split(cmd))
         lines = re.split('\r?\n', res)
         # lines = re.findall('handle: .* uuid: [0-9a-f\-]{36}', res)
         self.data['char-desc'] = lines
@@ -206,7 +208,7 @@ class GattDevice(object):
         """
 
         cmd = 'gatttool -t random -b %s --char-read --handle %s' % (self.addr, handle)
-        res = commands.getoutput(cmd)
+        res = subprocess.check_output(shlex.split(cmd))
         if not res.startswith('Characteristic value/descriptor:'):
             return None
         res = re.match('Characteristic value/descriptor: (.*)', res).groups()[0]
