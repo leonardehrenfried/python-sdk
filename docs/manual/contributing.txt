@@ -1,3 +1,5 @@
+.. _contributing:
+
 Contributing 
 =================
 
@@ -18,4 +20,3 @@ and `Android <https://github.com/relayr/android-sdk>`_.
 
 If you have more general questions you are more than welcomed to post them on the 
 `relayr Forum <https://forum.relayr.io/>`_ 
-

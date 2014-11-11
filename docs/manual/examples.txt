@@ -49,7 +49,7 @@ To determine the number of publishers e.g. it runs code similar to this
 ``demos/noise.py``
 -------------------------
 
-This script establishes a connection to a Wunderbar microphone device, checks
+This script establishes a connection to a WunderBar microphone device, checks
 the incoming noise level values for some time, compares them to a maximum
 threshold and sends a reminder, by email, to take action if needed.
 

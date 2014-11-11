@@ -1,4 +1,4 @@
-.. _install:
+.. _installation:
 
 Installation
 ============
@@ -95,7 +95,8 @@ before installing the package itself:
 .. code-block:: console
 
     $ git clone http://github.com/relayr/python-sdk.git
-    Cloning into 'python-sdk'... [...]
+    Cloning into 'python-sdk'...
+    [...]
     $ cd python-sdk
     $ git pull origin
     $ python setup.py install
@@ -108,12 +109,13 @@ You could also let ``pip`` itself pull in the development version without git:
 .. code-block:: console
 
     $ pip install git+git://github.com/relayr/python-sdk.git
-    ...
+    [...]
     Cleaning up...
     $ python setup.py install
 
 If you want to create the local documentation using Sphinx_ and/or run the
-test suite using pytest_ please read the respective sections.
+test suite using pytest_ please read the respective sections,
+:ref:`documentation` and :ref:`testing`.
 
 .. _pip: https://pip.pypa.io/
 .. _setuptools: https://pypi.python.org/pypi/setuptools/

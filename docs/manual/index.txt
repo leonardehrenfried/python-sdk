@@ -6,12 +6,13 @@
 The relayr Python Library Documentation
 =======================================
 
-Welcome to the relayr Python Library Documentation Reference. 
-Here you will find the full reference to the classes included in the library, code samples
-as well as examples which will assist you in getting started with your own relayr Python projects.
+Welcome to the relayr Python Library Documentation Reference.
+Here you will find the full reference to the classes included in the library,
+code samples as well as examples which will assist you in getting started with
+your own relayr Python projects.
 
-See the full `relayr API Reference <https://developer.relayr.io/dashboard/api/>`_ for 
-information about the relayr API.
+See the full `relayr API Reference <https://developer.relayr.io/dashboard/api/>`_
+for information about the relayr API.
 
 
 User's Guide
@@ -34,4 +35,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
