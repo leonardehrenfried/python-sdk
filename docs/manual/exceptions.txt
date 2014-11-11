@@ -1,8 +1,0 @@
-.. _exceptions:
-
-Exceptions
-============
-
-.. automodule:: relayr.exceptions
-   :members:
-   :undoc-members:
