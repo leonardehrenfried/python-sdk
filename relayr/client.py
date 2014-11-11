@@ -39,8 +39,9 @@ class Client(object):
         """
         Returns a generator for all apps on the relayr platform.
 
-        This is slightly artificial as long as the called API method always
+        A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
+        The generator for easier iteration through the results list.
 
         :rtype: A generator for :py:class:`relayr.resources.App` objects.
 
@@ -61,8 +62,9 @@ class Client(object):
         """
         Returns a generator for all publishers on the relayr platform.
 
-        This is slightly artificial as long as the called API method always
+        A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
+        The generator for easier iteration through the results list.
 
         :rtype: A generator for :py:class:`relayr.resources.Publisher` objects.
         """
@@ -78,8 +80,9 @@ class Client(object):
         """
         Returns a generator for all devices on the relayr platform.
 
-        This is slightly artificial as long as the called API method always
+        A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
+        The generator for easier iteration through the results list.
 
         :arg meaning: The *meaning* (type) of the desired devices.
         :type meaning: string
@@ -95,8 +98,9 @@ class Client(object):
         """
         Returns a generator for all device models on the relayr platform.
 
-        This is slightly artificial, as long as the called API method always
+        A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
+        The generator for easier iteration through the results list.
 
         :rtype: A generator for :py:class:`relayr.resources.DeviceModel` objects.
         """
@@ -113,8 +117,9 @@ class Client(object):
         A device model meaning is a simple dictionary with a ``key`` and ``value``
         field.
 
-        This is slightly artificial as long as the called API method always
+        A generator is returned since the called API method always
         returns the entire results list and not a paginated one.
+        The generator for easier iteration through the results list.
         
         :rtype: A device model meaning (as a dictionary) generator.
 
