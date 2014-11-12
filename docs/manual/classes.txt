@@ -1,6 +1,6 @@
-.. _classes:
+.. _reference:
 
-Classes
+Reference
 ============
 
 
