@@ -16,7 +16,7 @@ from .version import __version__
 
 # defaults
 relayrAPI = 'https://api.relayr.io'
-clientName = 'Python-Relayr-Client'
+clientName = 'python-sdk'
 dataConnectionHubName = 'PubNub'
 userAgentString = '{client_name}/{client_version} ({platform}; {python_implementation} {python_version})'
 DEBUG = False
