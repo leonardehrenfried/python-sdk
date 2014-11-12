@@ -5,7 +5,7 @@ A set of configuration variables used for various purposes.
 
 This module provides defaults for configuration variables and a way
 of overwriting these from the shell environment or a script using
-the Relayr Client.
+the relayr client.
 """
 
 import os
@@ -16,9 +16,10 @@ from .version import __version__
 
 # defaults
 relayrAPI = 'https://api.relayr.io'
-clientName = 'python-sdk'
+clientName = 'io.relayr.sdk.python'
 dataConnectionHubName = 'PubNub'
-userAgentString = '{client_name}/{client_version} ({platform}; {python_implementation} {python_version})'
+userAgentString = '{client_name}/{client_version} '
+userAgentString += '({platform}; {arch}; {python_implementation}-{python_version})'
 DEBUG = False
 LOG = False
 LOG_DIR = os.getcwd()
@@ -36,7 +37,8 @@ LOG_DIR = os.environ.get('RELAYR_LOG_DIR', LOG_DIR)
 userAgent = userAgentString.format(
 	client_name=clientName,
 	client_version=__version__,
-	platform=platform.platform(),
+	platform=platform.system() + '-' + platform.release(),
+	arch=platform.machine() + '-' + platform.architecture()[0],
 	python_implementation=platform.python_implementation(),
 	python_version=platform.python_version(),
 )
