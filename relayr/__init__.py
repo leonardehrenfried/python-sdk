@@ -1,3 +1,8 @@
+"""
+:copyright: Copyright 2014 by the relayr.io team, see AUTHORS.txt.
+:license: MIT, see LICENSE.txt for details.
+"""
+
 from relayr.client import Client, Api
 
 
