@@ -146,13 +146,18 @@ class Publisher(object):
 
         :param extended: Flag indicating if the info should be extended.
         :type extended: booloean
-        :rtype: A list of dicts representing apps.
+        :rtype: A list of :py:class:`relayr.resources.App` objects.
         """
 
         func = self.client.api.get_publisher_apps
         if extended:
             func = self.client.api.get_publisher_apps_extended
-        return func(self.id)
+        res = func(self.id)
+        for a in res:
+            app = App(a['id'], client=self.client)
+            app.get_info(extended=extended)
+            yield app
+
 
     def update(self, name=None):
         """
