@@ -307,15 +307,19 @@ class TestPublishers(object):
         publisherID = fix_registered.testset1['publisherID']
         pub = Publisher(id=publisherID, client=Client())
         apps = pub.get_apps()
-        assert len(apps) >= 1
-        assert 'id' in apps[0]
+        app_list = list(apps)
+        assert len(app_list) >= 1
+        assert hasattr(app_list[0], 'id')
 
     def test_pub_get_apps_extended(self, fix_registered):
         "Test getting extended apps for some publisher."
         from relayr import Client
         from relayr.resources import Publisher
+        token = fix_registered.testset1['token']
+        c = Client(token=token)
         publisherID = fix_registered.testset1['publisherID']
-        pub = Publisher(id=publisherID, client=Client())
+        pub = Publisher(id=publisherID, client=c)
         apps = pub.get_apps(extended=True)
-        assert len(apps) >= 1
-        assert 'clientId' in apps[0]
+        app_list = list(apps)
+        assert len(app_list) >= 1
+        assert hasattr(app_list[0], 'clientId')

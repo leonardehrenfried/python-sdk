@@ -374,8 +374,8 @@ class Device(object):
 
         :param id: the device's UID
         :type id: string
-
         """
+
         creds = self.client.api.post_devices_supscription(self.id)
         return Connection(callback, creds)
 
