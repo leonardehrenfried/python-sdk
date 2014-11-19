@@ -1,6 +1,5 @@
 requests
-PyBluez
-pubnub==3.5.2
+pubnub
 pycrypto
 termcolor
 pexpect

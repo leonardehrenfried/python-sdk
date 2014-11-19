@@ -11,29 +11,10 @@ import sys
 import subprocess
 
 import pytest
-try:
-    import bluetooth
-    HAVE_BLUETOOTH = True
-except NotImplementedError:
-    HAVE_BLUETOOTH = False
 
 
 ON_LINUX = sys.platform.startswith("linux")
 HAVE_BLUEZ = subprocess.Popen(['which', 'hcitool']).stdout != ''
-
-@pytest.mark.skipif(not HAVE_BLUETOOTH, reason="requires working bluetooth package")
-@pytest.mark.skipif(not ON_LINUX, reason="requires Linux")
-class TestBluetooth(object):
-    "Tests using PyBluez."
-
-    def test_service_discovery(self):
-        "Test service (not LE!) discovery."
-        try:
-            # if found contains a (addr, name) tuple per device
-            nearby_devices = bluetooth.discover_devices(lookup_names=True)
-        except bluetooth.btcommon.BluetoothError:
-            nearby_devices = []
-        assert len(devs) > 0
 
 
 @pytest.mark.skipif(not ON_LINUX, reason="requires Linux")
