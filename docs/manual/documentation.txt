@@ -3,7 +3,7 @@
 Documentation 
 =============
 
-The official documentation (manual) of the Relayr Python Client is hosted on
+The official documentation (manual) of the relayr Python library is hosted on
 ReadTheDocs_. It is also included inside the ``docs/manual`` subdirectory of
 the source code distribution. You can render it in various formats using
 Sphinx_, a popular tool for creating documentation. If you don't use it
