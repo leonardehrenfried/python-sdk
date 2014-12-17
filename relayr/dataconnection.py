@@ -40,7 +40,7 @@ class PubnubDataConnection(threading.Thread):
             cipher_key=credentials.get('cipherKey', None),
             auth_key=credentials.get('authKey', None),
             secret_key=None,
-            ssl_on=False
+            ssl_on=True
         )
 
         self.setDaemon(True)
