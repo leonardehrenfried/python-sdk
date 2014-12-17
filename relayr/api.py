@@ -960,6 +960,10 @@ class Api(object):
         return data
 
     def post_devices_supscription(self, deviceID):
+        self.logger.info("Deprecated method 'post_devices_supscription' called. Please use 'post_devices_subscription' instead.")
+        self.post_devices_subscription(self, deviceID)
+
+    def post_devices_subscription(self, deviceID):
         """
         Subscribes a user to a public device.
     
