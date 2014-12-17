@@ -1144,7 +1144,7 @@ class Api(object):
     
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
         url = '{0}/transmitters/{1}/devices/{2}'.format(self.host, transmitterID, deviceID)
-        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
     def get_transmitter_devices(self, transmitterID):
