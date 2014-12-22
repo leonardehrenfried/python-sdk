@@ -56,10 +56,16 @@ class User(object):
             dev.get_info()
             yield dev
 
-    def connect_device(self, device, callback):
+    def connect_device(self, app, device, callback):
         "Opens and returns a connection to the data provider."
 
-        creds = self.client.api.post_devices_supscription(device.id)
+        creds = self.client.api.post_devices_subscription(app.id, device.id)
+        return Connection(callback, creds)
+
+    def connect_public_device(self, device, callback):
+        "Opens and returns a connection to the data provider."
+
+        creds = self.client.api.post_devices_public_subscription(device.id)
         return Connection(callback, creds)
 
     def disconnect_device(self, id):
@@ -355,7 +361,8 @@ class Device(object):
         :param app: the app (name) to be connected
         :type app: string(?)
         """
-        raise NotImplementedError
+        res = self.client.api.post_app_device(app.id, self.id)
+        return res
 
     def disconnect_from_app(self, app):
         """
@@ -368,6 +375,13 @@ class Device(object):
         """
         raise NotImplementedError
 
+    def connect_to_device(self, appID, id, callback):
+        """
+        Subscribes a user to a device.
+        """
+        creds = self.client.api.post_devices_subscription(appID, self.id)
+        return Connection(callback, creds)
+
     def connect_to_public_device(self, id, callback):
         """
         Subscribes a user to a public device.
@@ -376,7 +390,7 @@ class Device(object):
         :type id: string
         """
 
-        creds = self.client.api.post_devices_supscription(self.id)
+        creds = self.client.api.post_devices_public_subscription(self.id)
         return Connection(callback, creds)
 
     def send_command(self, command, data):
