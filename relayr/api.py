@@ -687,7 +687,7 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
-    def post_app_device(appID, deviceID):
+    def post_app_device(self, appID, deviceID):
         """
         Connects an app to a device. Credentials are returned as part of the response.
         """
@@ -696,9 +696,9 @@ class Api(object):
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
-    def delete_app_device(appID, deviceID):
+    def delete_app_device(self, appID, deviceID):
         """
-        Disconnect an app from  a device.
+        Disconnect an app from a device.
         """
         # {{relayrAPI}}/apps/{{appID}}/devices/{{deviceID}}
         url = '{0}/apps/{1}/devices/{2}'.format(self.host, appID, deviceID)
@@ -959,12 +959,13 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
+    ## TODO: remove in version 0.3.0
     def post_devices_supscription(self, deviceID):
         if config.LOG:
-            self.logger.info("Deprecated method 'post_devices_supscription' called. Please use 'post_devices_subscription' instead.")
-        self.post_devices_subscription(deviceID)
+            self.logger.info("Deprecated method 'post_devices_supscription' called. Please use 'post_devices_public_subscription' instead.")
+        self.post_devices_public_subscription(deviceID)
 
-    def post_devices_subscription(self, deviceID):
+    def post_devices_public_subscription(self, deviceID):
         """
         Subscribes a user to a public device.
     
@@ -984,6 +985,24 @@ class Api(object):
     
         # https://api.relayr.io/devices/%s/subscription
         url = '{0}/devices/{1}/subscription'.format(self.host, deviceID)
+        _, data = self.perform_request('POST', url, headers=self.headers)
+        return data
+
+    def post_devices_subscription(self, appID, deviceID):
+        """
+        Subscribes a user to a device.
+        Sample result (anonymized values)::
+
+            {
+                "authKey": "...",
+                "cipherKey": "...",
+                "channel": "...",
+                "subscribeKey": "sub-c-..."
+            }
+        """
+
+        # https://api.relayr.io/apps/%s/devices/%s/subscription
+        url = '{0}/apps/{1}/devices/{2}/subscription'.format(self.host, appID, deviceID)
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
