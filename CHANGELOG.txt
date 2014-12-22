@@ -3,6 +3,18 @@
 Changelog
 =========
 
+
+0.2.1 (2014-12-22)
+------------------
+
+Bugfix release.
+
+* removed PyBluez dependancy
+* removed Pubnub version pinning
+* made publisher.get_apps() return App objects
+* added distinction between public and private devices
+
+
 0.2.0 (2014-11-12)
 ------------------
 
@@ -11,6 +23,7 @@ First public release.
 * applied refactorings
 * added demos
 * improved documentation and tests
+
 
 0.1.1 (2014-10-10)
 ------------------

@@ -130,13 +130,13 @@ class TestAPI(object):
         assert len(apps) > 0
         assert type(apps[0]) == dict
 
-    def test_device_credentials(self, fix_registered):
-        "Test get credentials for subscribing to a device."
+    def test_public_device_credentials(self, fix_registered):
+        "Test get credentials for subscribing to a public device."
         from relayr import Client
         token = fix_registered.testset1['token']
         c = Client(token=token)
         deviceID = fix_registered.testset1['deviceID']
-        creds = c.api.post_devices_supscription(deviceID)
+        creds = c.api.post_devices_public_subscription(deviceID)
         for key in 'authKey subscribeKey cipherKey channel'.split():
             assert key in creds
 

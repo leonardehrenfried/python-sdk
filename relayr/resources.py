@@ -373,7 +373,8 @@ class Device(object):
         :param app: the app (name) to be disconnected from
         :type app: string(?)
         """
-        raise NotImplementedError
+        res = self.client.api.delete_app_device(app.id, self.id)
+        return res
 
     def connect_to_device(self, appID, id, callback):
         """

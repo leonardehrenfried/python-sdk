@@ -65,7 +65,8 @@ Below you can see a version of that code stripped down to only a few lines
     def callback(message, channel):
         print(message)
     user = c.get_user()
-    conn = user.connect_device(d, callback)
+    app = c.get_app()
+    conn = user.connect_device(app, d, callback)
     conn.start()
     time.sleep(10)
     conn.stop()

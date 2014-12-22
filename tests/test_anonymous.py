@@ -116,7 +116,8 @@ class TestAPIAnonymous(object):
         from relayr.exceptions import RelayrApiException
         with pytest.raises(RelayrApiException) as excinfo:
             info = Client().api.get_oauth2_user_info()
-        assert str(excinfo.value).startswith('CredentialsMissing')
+        prefix = 'The supplied authentication is not authorized to access this resource.'
+        assert str(excinfo.value).startswith(prefix)
 
     def test_list_all_publishers(self):
         from relayr import Client

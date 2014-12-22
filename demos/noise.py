@@ -86,7 +86,8 @@ def connect():
     m = c.get_device(id=MICROPHONE_ID).get_info()
     cb = Callbacks(m)
     user = c.get_user()
-    conn = user.connect_device(m, cb.microphone)
+    app = c.get_app()
+    conn = user.connect_device(app, m, cb.microphone)
     conn.start()
     print("Monitoring '%s' (%s) for 60 seconds..." % (m.name, m.id))
     try:
