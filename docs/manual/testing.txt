@@ -37,7 +37,7 @@ correctly (the ``s`` indicates a skipped test, here because of platform limitati
 .. code-block:: console
 
     =========================== test session starts ============================
-    platform darwin -- Python 2.7.6 -- py-1.4.26 -- pytest-2.6.4
+    platform darwin -- Python 2.7.8 -- py-1.4.26 -- pytest-2.6.4
     collected 41 items
 
     tests/test_anonymous.py ..........

@@ -13,12 +13,12 @@ $ python api_pulse.py
 Relayr API Pulse
 ............................................................................
 Path: demos/api_pulse.py
-MD5 hash: 1507cfcb103b8e5df5d301c206138b93
+MD5 hash: 339bafd0a28b18beed54ea5a90f5710d
 API: https://api.relayr.io
-Python Relayr client version: 0.1.1
-Python version: CPython 2.7.6
-Platform: Darwin-10.8.0-i386-64bit
-Date/Time: 2014-10-15T14:13:51.480319
+Python Relayr client version: 0.2.2
+Python version: CPython 2.7.8
+Platform: Darwin-14.0.0-x86_64-i386-64bit
+Date/Time: 2014-12-23T11:08:17.754622
 ............................................................................
 server status ok: True (1.02 s)
 317 publishers (0.64 s)

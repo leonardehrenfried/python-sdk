@@ -27,18 +27,20 @@ help of Pip:
 Examples
 --------
 
-Receive data from a device:
+Receive data for 10 seconds from a private device of your WunderBar
+(you can obtain your device IDs e.g. from your `relayr Dashboard`_):
 
 .. code-block:: python
 
     import time
     from relayr import Client
     c = Client(token='<my_access_token>')
-    d = c.get_device(id='<my_device_id>').get_info()
+    dev = c.get_device(id='<my_device_id>').get_info()
     user = c.get_user()
+    app = c.get_app()
     def callback(message, channel):
         print(repr(message), type(message))
-    conn = user.connect_device(d, callback)
+    conn = user.connect_device(app, dev, callback)
     conn.start()
     time.sleep(10)
     conn.stop()
@@ -64,3 +66,4 @@ our Developer Dashboard `Python section`_!
 .. _Python Package Index: https://pypi.python.org/pypi/relayr/
 .. _BlueZ: http://www.bluez.org/
 .. _Python section: https://developer.relayr.io/documents/Python/Introduction
+.. _relayr Dashboard: https://developer.relayr.io/dashboard/devices

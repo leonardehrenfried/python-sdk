@@ -961,6 +961,11 @@ class Api(object):
 
     ## TODO: remove in version 0.3.0
     def post_devices_supscription(self, deviceID):
+        """
+        Deprecated method, replaced by ``post_devices_public_subscription``.
+
+        This will be removed in version 0.3.0.
+        """
         if config.LOG:
             self.logger.info("Deprecated method 'post_devices_supscription' called. Please use 'post_devices_public_subscription' instead.")
         self.post_devices_public_subscription(deviceID)

@@ -19,3 +19,6 @@ prune docs/manual/_build
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
+recursive-exclude * *~
+
+exclude tests/fixture_registered_dcg.py
