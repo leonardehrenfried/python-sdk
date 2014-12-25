@@ -27,7 +27,7 @@ help of Pip:
 Examples
 --------
 
-Receive data stream for 10 seconds, from one of your WunderBar sensors (device). In the example below 
+Receive a 10 second data stream, from one of your WunderBar sensors (device). In the example below 
 the device does not have to be a public one in order to be used. 
 You can obtain your device IDs e.g. from the `relayr Dashboard`:
 
