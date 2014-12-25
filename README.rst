@@ -46,7 +46,7 @@ You can obtain your device IDs e.g. from the `relayr Dashboard`:
     time.sleep(10)
     conn.stop()
 
-Switch on/off an LED light on a device:
+Switch a device's LED on/off :
 
 .. code-block:: python
 
