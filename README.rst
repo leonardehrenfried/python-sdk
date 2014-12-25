@@ -29,7 +29,7 @@ Examples
 
 Receive a 10 second data stream, from one of your WunderBar sensors (device). In the example below 
 the device does not have to be a public one in order to be used. 
-You can obtain your device IDs e.g. from the `relayr Dashboard`:
+You can obtain your device IDs from the relayr Dashboard `My Devices section`_:
 
 .. code-block:: python
 
@@ -67,4 +67,4 @@ our Developer Dashboard `Python section`_!
 .. _Python Package Index: https://pypi.python.org/pypi/relayr/
 .. _BlueZ: http://www.bluez.org/
 .. _Python section: https://developer.relayr.io/documents/Python/Introduction
-.. _relayr Dashboard: https://developer.relayr.io/dashboard/devices
+.. _My Devices section: https://developer.relayr.io/dashboard/devices
