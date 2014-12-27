@@ -19,7 +19,7 @@ help of Pip:
 
     pip install git+https://github.com/relayr/python-sdk
 
-2. You may use the following to install the package from the `Python Package Index`_::
+2. You could also use the following to install the package from the `Python Package Index`_::
 
     pip install relayr
 
@@ -27,8 +27,9 @@ help of Pip:
 Examples
 --------
 
-Receive data for 10 seconds from a private device of your WunderBar
-(you can obtain your device IDs e.g. from your `relayr Dashboard`_):
+Receive a 10 second data stream, from one of your WunderBar sensors (device). In the example below 
+the device does not have to be a public one in order to be used. 
+You can obtain your device IDs from the relayr Dashboard `My Devices section`_:
 
 .. code-block:: python
 
@@ -45,7 +46,7 @@ Receive data for 10 seconds from a private device of your WunderBar
     time.sleep(10)
     conn.stop()
 
-Switch on/off an LED light on a device:
+Switch a device's LED on/off :
 
 .. code-block:: python
 
@@ -66,4 +67,4 @@ our Developer Dashboard `Python section`_!
 .. _Python Package Index: https://pypi.python.org/pypi/relayr/
 .. _BlueZ: http://www.bluez.org/
 .. _Python section: https://developer.relayr.io/documents/Python/Introduction
-.. _relayr Dashboard: https://developer.relayr.io/dashboard/devices
+.. _My Devices section: https://developer.relayr.io/dashboard/devices
