@@ -1020,7 +1020,7 @@ class Api(object):
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
-    def post_device_app(deviceID, appID):
+    def post_device_app(self, deviceID, appID):
         """
         Connects a device to an app. 
         
@@ -1031,7 +1031,7 @@ class Api(object):
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
-    def delete_device_app(deviceID, appID):
+    def delete_device_app(self, deviceID, appID):
         """
         Disconnects a device from an app.
         """
