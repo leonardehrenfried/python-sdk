@@ -31,7 +31,7 @@ def create_logger(sender):
 
     logfile = "{0}/relayr-api-{1}.log".format(config.LOG_DIR, id(sender))
     h = logging.FileHandler(logfile)
-    # h = logging.RotatingFileHandler(logfile, 
+    # h = logging.RotatingFileHandler(logfile,
     #     mode='a', maxBytes=2**14, backupCount=5, encoding=None, delay=0)
 
     # h.setLevel(logging.DEBUG)
@@ -82,7 +82,7 @@ class Api(object):
     """
     def __init__(self, token=None):
         """
-        :arg token: a token generated on the relayr site for a combination of 
+        :arg token: a token generated on the relayr site for a combination of
             a relayr user and application.
         """
 
@@ -104,7 +104,7 @@ class Api(object):
         try:
             self.get_server_status()
         except:
-            raise 
+            raise
 
     def __del__(self):
         """Object destruction..."""
@@ -117,8 +117,8 @@ class Api(object):
 
         Query parameters are expected in the ``url`` parameter.
         For returned status codes other than 2XX a ``RelayrApiException``
-        is raised which contains the API call (method and URL) plus 
-        a ``curl`` command replicating the API call for debugging reuse 
+        is raised which contains the API call (method and URL) plus
+        a ``curl`` command replicating the API call for debugging reuse
         on the command-line.
         """
 
@@ -169,16 +169,16 @@ class Api(object):
     def get_users_validate(self, userEmail):
         """
         Validate a user email address.
-        
+
         :param userEmail: The user email address to be validated.
         :type userEmail: string
         :rtype: A dict with an ``exists`` field and a Boolean result value.
-    
+
         Sample result::
-    
+
             {"exists": True}
         """
-        
+
         # https://api.relayr.io/users/validate?email=<userEmail>
         url = '{0}/users/validate?email={1}'.format(self.host, userEmail)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -203,7 +203,7 @@ class Api(object):
     def post_oauth2_token(self, clientID, clientSecret, code, redirectURI):
         """
         User:token from tmp code. (?)
-        
+
         Generates a user token from supplied parameters
         """
 
@@ -214,7 +214,7 @@ class Api(object):
             "code": code,
             "redirect_uri": redirectURI
         }
-    
+
         # https://api.relayr.io/oauth2/token
         url = '{0}/oauth2/token'.format(self.host)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
@@ -223,33 +223,33 @@ class Api(object):
     def get_oauth2_appdev_token(self, appID):
         """
         Retrieves a token representing a specific relayr application and user.
-        
+
         :param appID: The application's UUID.
         :type appID: string
         :rtype: A dict with fields describing the token.
-    
+
         Sample result (anonymized token value)::
-    
+
             {
                 "token": "...",
                 "expiryDate": "2014-10-08T10:14:07.789Z"
             }
         """
-    
+
         # https://api.relayr.io/oauth2/appdev-token/<appID>
         url = '{0}/oauth2/appdev-token/{1}'.format(self.host, appID)
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
-    
+
     def post_oauth2_appdev_token(self, appID):
         """
         Generates a new token representing a user and a relayr Application.
-        
+
         :param appID: The application's UUID.
         :type appID: string
         :rtype: A dict with fields describing the token.
         """
-    
+
         # https://api.relayr.io/oauth2/appdev-token/<appID>
         url = '{0}/oauth2/appdev-token/{1}'.format(self.host, appID)
         _, data = self.perform_request('POST', url, headers=self.headers)
@@ -262,7 +262,7 @@ class Api(object):
         :param appID: The application's UUID.
         :type appID: string
         """
-        
+
         # https://api.relayr.io/oauth2/appdev-token/<appID>
         url = '{0}/oauth2/appdev-token/{1}'.format(self.host, appID)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
@@ -275,13 +275,13 @@ class Api(object):
     def get_oauth2_user_info(self):
         """
         Returns information about the user initiating the request.
-        
+
         :rtype: A dictionary with fields describing the user.
-    
+
         Sample result (partly anonymized values)::
-        
+
             {
-                "email": "joe@foo.com", 
+                "email": "joe@foo.com",
                 "id": "...",
                 "name": "joefoo"
             }
@@ -295,7 +295,7 @@ class Api(object):
     def patch_user(self, userID, name=None, email=None):
         """
         Updates one or more user attributes.
-        
+
         :param userID: the users's UUID
         :type userID: string
         :param name: the user name to be set
@@ -304,7 +304,7 @@ class Api(object):
         :type email: string
         :rtype: dict with user info fields
         """
-    
+
         data = {}
         if name is not None:
             data.update(name=name)
@@ -347,12 +347,12 @@ class Api(object):
     def get_user_publishers(self, userID):
         """
         Returns all publishers owned by a specific user.
-    
+
         :param userID: the users's UUID
         :type userID: string
         :rtype: list of dicts representing publishers
         """
-        
+
         # https://api.relayr.io/users/%s/publishers
         url = '{0}/users/{1}/publishers'.format(self.host, userID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -375,12 +375,12 @@ class Api(object):
     def get_user_transmitters(self, userID):
         """
         Returns all transmitters under a specific user.
-    
+
         :param userID: the users's UUID
         :type userID: string
         :rtype: list of dicts with IDs and secrets
         """
-    
+
         # https://api.relayr.io/users/%s/transmitters
         url = '{0}/users/{1}/transmitters'.format(self.host, userID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -389,12 +389,12 @@ class Api(object):
     def get_user_devices(self, userID):
         """
         Returns all devices registered under a specific user.
-    
+
         :param userID: the users's UUID
         :type userID: string
         :rtype: list of dicts ...
         """
-                
+
         # https://api.relayr.io/users/%s/devices
         url = '{0}/users/{1}/devices'.format(self.host, userID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -403,7 +403,7 @@ class Api(object):
     def get_user_devices_filtered(self, userID, meaning):
         """
         Returns all devices registered under a specific user filtered by meaning.
-    
+
         :param userID: the users's UUID
         :type userID: string
         :param meaning: a meaning used for filtering results
@@ -419,7 +419,7 @@ class Api(object):
     def get_user_devices_bookmarks(self, userID):
         """
         Returns a list of devices bookmarked by the specific user.
-    
+
         :param userID: the users's UUID
         :type userID: string
         :rtype: list of dicts, each representing a device
@@ -434,7 +434,7 @@ class Api(object):
               u'public': True,
               u'secret': '238885'}]
         """
-                
+
         # https://api.relayr.io/users/%s/devices/bookmarks
         url = '{0}/users/{1}/devices/bookmarks'.format(self.host, userID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -443,7 +443,7 @@ class Api(object):
     def post_user_devices_bookmark(self, userID, deviceID):
         """
         Bookmarks a specific public device for a user.
-    
+
         :param userID: the users's UUID
         :type userID: string
         :param deviceID: the UUID of the device to be bookmarked
@@ -456,7 +456,7 @@ class Api(object):
              'deviceId': '...',
              'userId': '...'}
          """
-                
+
         # https://api.relayr.io/users/%s/devices/bookmarks
         url = '{0}/users/{1}/devices/{2}/bookmarks'.format(self.host, userID, deviceID)
         _, data = self.perform_request('POST', url, headers=self.headers)
@@ -481,47 +481,47 @@ class Api(object):
     def post_user_wunderbar(self, userID):
         """
         Returns the IDs and Secrets of the Master Module and Sensor Modules.
-    
+
         :param userID: the users's UUID
         :type userID: string
         :rtype: dict with information about master and sensor modules/devices
-    
+
         Sample result (abbreviated, some values anonymized)::
-    
+
             {
-                "bridge": { ... }, 
+                "bridge": { ... },
                 "microphone": {
-                    "name": "My Wunderbar Microphone", 
-                    "public": False, 
-                    "secret": "......", 
-                    "owner": "...", 
+                    "name": "My Wunderbar Microphone",
+                    "public": False,
+                    "secret": "......",
+                    "owner": "...",
                     "model": {
                         "readings": [
                             {
-                                "meaning": "noise_level", 
+                                "meaning": "noise_level",
                                 "unit": "dba"
                             }
-                        ], 
-                        "manufacturer": "Relayr GmbH", 
-                        "id": "...", 
+                        ],
+                        "manufacturer": "Relayr GmbH",
+                        "id": "...",
                         "name": "Wunderbar Microphone"
-                    }, 
-                    "id": "...", 
+                    },
+                    "id": "...",
                     "firmwareVersion": "1.0.0"
-                }, 
-                "light": { ... }, 
+                },
+                "light": { ... },
                 "masterModule": {
-                    "owner": "...", 
-                    "secret": "............", 
-                    "id": "...", 
+                    "owner": "...",
+                    "secret": "............",
+                    "id": "...",
                     "name": "My Wunderbar Master Module"
-                }, 
-                "infrared": { ... }, 
-                "thermometer": { ... }, 
+                },
+                "infrared": { ... },
+                "thermometer": { ... },
                 "gyroscope": { ... }
-            }    
+            }
         """
-    
+
         # https://api.relayr.io/users/%s/wunderbar
         url = '{0}/users/{1}/wunderbar'.format(self.host, userID)
         _, data = self.perform_request('POST', url, headers=self.headers)
@@ -530,11 +530,11 @@ class Api(object):
     def post_users_destroy(self, userID):
         """
         Removes all Wunderbars associated with a specific user.
-    
+
         :param userID: the users's UUID
         :type userID: string
         """
-    
+
         # https://api.relayr.io/users/%s/destroy-everything-i-love
         url = '{0}/users/{1}/destroy-everything-i-love'.format(self.host, userID)
         _, data = self.perform_request('POST', url, headers=self.headers)
@@ -547,7 +547,7 @@ class Api(object):
     def get_public_apps(self):
         """
         Returns a list of all applications on the relayr platform
-    
+
         :rtype: list of dicts, each representing a relayr application
         """
 
@@ -559,7 +559,7 @@ class Api(object):
     def post_app(self, appName, publisherID, redirectURI, appDescription):
         """
         Registers a new app to the relayr platform.
-    
+
         :rtype: list of dicts, each representing a relayr application
         """
 
@@ -577,9 +577,9 @@ class Api(object):
     def get_app_info(self, appID):
         """
         Returns information about the app with the given ID.
-        
+
         Sample result (anonymized token value)::
-        
+
             {
                 "id": "...",
                 "name": "My App",
@@ -587,7 +587,7 @@ class Api(object):
                 ...
             }
         """
-    
+
         # https://api.relayr.io/apps/<appID>
         url = '{0}/apps/{1}'.format(self.host, appID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -596,9 +596,9 @@ class Api(object):
     def get_app_info_extended(self, appID):
         """
         Returns extended information about the app with the given ID.
-        
+
         Sample result (some values anonymized)::
-        
+
             {
                 "id": "...",
                 "name": "My App",
@@ -609,17 +609,17 @@ class Api(object):
                 "redirectUri": https://relayr.io
             }
         """
-    
+
         # https://api.relayr.io/apps/<appID>/extended
         url = '{0}/apps/{1}/extended'.format(self.host, appID)
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
-    
-    
+
+
     def patch_app(self, appID, description=None, name=None, redirectUri=None):
         """
         Updates one or more app attributes.
-        
+
         :param appID: the application's UID
         :type appID: string
         :param description: the user name to be set
@@ -628,9 +628,9 @@ class Api(object):
         :type name: string
         :param redirectUri: the redirect URI to be set
         :type redirectUri: string
-        
+
         Sample result (some values anonymized)::
-        
+
             {
                 "id": "...",
                 "name": "My App",
@@ -658,10 +658,10 @@ class Api(object):
     def delete_app(self, appID):
         """
         Deletes an app from the relayr platform.
-        
+
         :param appID: the application's UID
         :type appID: string
-        
+
         """
 
         # https://api.relayr.io/apps/<appID>
@@ -674,7 +674,7 @@ class Api(object):
         Returns info about the app initiating the request (the one in the token).
 
         Sample result (anonymized token value)::
-        
+
             {
                 "id": "...",
                 "name": "My App",
@@ -708,30 +708,30 @@ class Api(object):
     # ..............................................................................
     # Publishers
     # ..............................................................................
-    
+
     def get_public_publishers(self):
         """
         Returns a list of all publishers on the relayr platform.
-    
+
         :rtype: list of dicts, each representing a relayr publisher
         """
-    
+
         # https://api.relayr.io/publishers
         url = '{0}/publishers'.format(self.host)
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
-        
+
     def post_publisher(self, userID, name):
         """
         Registers a new publisher.
-    
+
         :param userID: the user UID of the publisher
         :type userID: string
         :param name: the publisher name
         :type name: string
         :rtype: a dict with fields describing the new publisher
         """
-    
+
         # https://api.relayr.io/publishers
         data = {'owner': userID, 'name': name}
         url = '{0}/publishers'.format(self.host)
@@ -741,7 +741,7 @@ class Api(object):
     def delete_publisher(self, publisherID):
         """
         Deletes a specific publisher from the relayr platform.
-    
+
         :param publisherID: the publisher UID
         :type publisherID: string
         :rtype: an empty dict(?)
@@ -755,7 +755,7 @@ class Api(object):
     def get_publisher_apps(self, publisherID):
         """
         Returns a list of apps published by a specific publisher.
-        
+
         :rtype: A list of apps.
         """
 
@@ -767,7 +767,7 @@ class Api(object):
     def get_publisher_apps_extended(self, publisherID):
         """
         Returns a list with extended information about the publisher's apps.
-        
+
         :rtype: A list of apps.
         """
 
@@ -775,23 +775,23 @@ class Api(object):
         url = '{0}/publishers/{1}/apps/extended'.format(self.host, publisherID)
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
-    
-    
+
+
     def patch_publisher(self, publisherID, name=None):
         """
         Updates one or more publisher attributes.
-        
+
         :param publisherID: the publisher's UID
         :type publisherID: string
         :param name: the publisher name to be set
         :type name: string
         :rtype: ``True``, if successful, ``False`` otherwise
         """
-    
+
         data = {}
         if name is not None:
             data.update(name=name)
-        
+
         # https://api.relayr.io/publishers/<id>
         url = '{0}/publishers/{1}'.format(self.host, publisherID)
         _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
@@ -800,7 +800,7 @@ class Api(object):
     # ..............................................................................
     # Devices
     # ..............................................................................
-    
+
     def get_device_configuration(self, deviceID):
         """
         Returns the device's configuration, default values and schema.
@@ -808,23 +808,23 @@ class Api(object):
         Example result::
 
             {
-                "version": "1.0.0", 
+                "version": "1.0.0",
                 "configuration": {
                     "defaultValues": {
                         "frequency": 1000
-                    }, 
+                    },
                     "schema": {
                         "required": [
                             "frequency"
-                        ], 
-                        "type": "object", 
+                        ],
+                        "type": "object",
                         "properties": {
                             "frequency": {
-                                "minimum": 5, 
-                                "type": "integer", 
+                                "minimum": 5,
+                                "type": "integer",
                                 "description": "Frequency of the sensor updates in milliseconds"
                             }
-                        }, 
+                        },
                         "title": "Relayr configuration schema"
                     }
                 }
@@ -833,7 +833,7 @@ class Api(object):
         :param deviceID: the device UID
         :type deviceID: string
         """
-        
+
         # https://api.relayr.io/devices/<deviceID>/firmware
         url = '{0}/devices/{1}/firmware'.format(self.host, deviceID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -848,7 +848,7 @@ class Api(object):
         :param frequency: the number of ms between two sensor transmissions
         :type frequency: integer
         """
-        
+
         data = {'frequency': frequency}
         # https://api.relayr.io/devices/<deviceID>/configuration
         url = '{0}/devices/{1}/configuration'.format(self.host, deviceID)
@@ -858,12 +858,12 @@ class Api(object):
     def get_public_devices(self, meaning=''):
         """
         Returns list of all public devices on the relayr platform.
-    
+
         :param meaning: required meaning in the device model's ``readings`` attribute
         :type meaning: string
         :rtype: list of dicts, each representing a relayr device
         """
-        
+
         # https://api.relayr.io/devices/public
         url = '{0}/devices/public'.format(self.host)
         if meaning:
@@ -874,7 +874,7 @@ class Api(object):
     def post_device(self, name, owner, modelId, firmwareVersion):
         """
         Registers a new device on the relayr platform.
-    
+
         :rtype: list of dicts, each representing a relayr device
         """
 
@@ -892,15 +892,15 @@ class Api(object):
     def get_device(self, deviceID):
         """
         Returns information about a specific device.
-            
+
         :param deviceID: the device UID
         :type deviceID: string
         :rtype: a dict with fields containing information about the device
-    
-        Raises ``exceptions.RelayrApiException`` for invalid UIDs or missing 
+
+        Raises ``exceptions.RelayrApiException`` for invalid UIDs or missing
         credentials...
         """
-        
+
         # https://api.relayr.io/devices/%s
         url = '{0}/devices/{1}'.format(self.host, deviceID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -909,12 +909,12 @@ class Api(object):
     def patch_device(self, deviceID=None, deviceName=None, deviceDescription=None, deviceModel=None, isDevicePublic=None):
         """
         Updates one or more device attributes.
-            
+
         :param deviceID: the device UID
         :type deviceID: string
         :rtype: a dict with fields containing information about the device
-    
-        Raises ``exceptions.RelayrApiException`` for invalid UIDs or missing 
+
+        Raises ``exceptions.RelayrApiException`` for invalid UIDs or missing
         credentials...
         """
 
@@ -948,12 +948,12 @@ class Api(object):
     def get_device_apps(self, deviceID):
         """
         Returns all the apps connected to a specific device.
-    
+
         :param deviceID: the device UID
         :type deviceID: string
         :rtype: a list of dicts with information about apps
         """
-    
+
         # https://api.relayr.io/devices/<deviceID>/apps
         url = '{0}/devices/{1}/apps'.format(self.host, deviceID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -973,21 +973,21 @@ class Api(object):
     def post_devices_public_subscription(self, deviceID):
         """
         Subscribes a user to a public device.
-    
+
         :param deviceID: the device's UID
         :type deviceID: string
         :rtype: dict with connection credentials
-        
+
         Sample result (anonymized values)::
-    
+
             {
-                "authKey": "...", 
-                "cipherKey": "...", 
-                "channel": "...", 
+                "authKey": "...",
+                "cipherKey": "...",
+                "channel": "...",
                 "subscribeKey": "sub-c-..."
             }
         """
-    
+
         # https://api.relayr.io/devices/%s/subscription
         url = '{0}/devices/{1}/subscription'.format(self.host, deviceID)
         _, data = self.perform_request('POST', url, headers=self.headers)
@@ -1022,8 +1022,8 @@ class Api(object):
 
     def post_device_app(self, deviceID, appID):
         """
-        Connects a device to an app. 
-        
+        Connects a device to an app.
+
         Credentials for data reception are returned as part of the response.
         """
         # {{relayrAPI}}/devices/{{deviceID}}/apps/{{appID}}
@@ -1043,14 +1043,14 @@ class Api(object):
     # ..............................................................................
     # Device models
     # ..............................................................................
-    
+
     def get_public_device_models(self):
         """
         Returns list of all device models available on the relayr platform.
-    
+
         :rtype: list of dicts, each representing a relayr device model
         """
-    
+
         # https://api.relayr.io/device-models
         url = '{0}/device-models'.format(self.host)
         _, data = self.perform_request('GET', url)
@@ -1059,10 +1059,10 @@ class Api(object):
     def get_device_model(self, devicemodelID):
         """
         Returns information about a specific device model.
-        
+
         :rtype: A nested dictionary structure with fields describing the DM.
         """
-    
+
         # https://api.relayr.io/device-models/<id>
         url = '{0}/device-models/{1}'.format(self.host, devicemodelID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -1071,7 +1071,7 @@ class Api(object):
     def get_public_device_model_meanings(self):
         """
         Returns list of all device model meanings (no credentials needed).
-    
+
         :rtype: list of dicts, each representing a relayr device model meaning
         """
 
@@ -1087,12 +1087,12 @@ class Api(object):
     def get_transmitter(self, transmitterID):
         """
         Returns information about a specific transmitter with the given ID.
-    
+
         :param transmitterID: the transmitter UID
         :type transmitterID: string
         :rtype: a dict with fields describing the transmitter
         """
-    
+
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -1101,7 +1101,7 @@ class Api(object):
     def post_transmitter(self, transmitterID, owner=None, name=None):
         """
         Registers a new Transmitter on the relayr platform.
-    
+
         :param transmitterID: the transmitter UID
         :type transmitterID: string
         :param owner: the transmitters owner's UID
@@ -1116,7 +1116,7 @@ class Api(object):
             data.update(owner=owner)
         if name is not None:
             data.update(name=name)
-        
+
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
@@ -1125,7 +1125,7 @@ class Api(object):
     def patch_transmitter(self, transmitterID, name=None):
         """
         Updates information about a specific transmitter.
-    
+
         :param transmitterID: the transmitter UID
         :type transmitterID: string
         :param name: the transmitter name
@@ -1136,7 +1136,7 @@ class Api(object):
         data = {}
         if name is not None:
             data.update(name=name)
-                
+
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
         _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
@@ -1145,7 +1145,7 @@ class Api(object):
     def delete_transmitter(self, transmitterID):
         """
         Deletes a specific transmitter from the relayr platform.
-    
+
         :param transmitterID: the transmitter UID
         :type transmitterID: string
         :rtype: an empty dict(?)
@@ -1159,14 +1159,14 @@ class Api(object):
     def post_transmitter_device(self, transmitterID, deviceID):
         """
         Connects a transmitter to a device.
-    
+
         :param transmitterID: the transmitter UID
         :type transmitterID: string
         :param deviceID: the device UID
         :type deviceID: string
         :rtype: an empty dict(?)
         """
-    
+
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
         url = '{0}/transmitters/{1}/devices/{2}'.format(self.host, transmitterID, deviceID)
         _, data = self.perform_request('POST', url, headers=self.headers)
@@ -1175,12 +1175,12 @@ class Api(object):
     def get_transmitter_devices(self, transmitterID):
         """
         Returns a list of devices connected to a specific transmitter.
-    
+
         :param transmitterID: the transmitter UID
         :type transmitterID: string
         :rtype: a list of devices
         """
-    
+
         # https://api.relayr.io/transmitters/<transmitterID>/devices
         url = '{0}/transmitters/{1}/devices'.format(self.host, transmitterID)
         _, data = self.perform_request('GET', url, headers=self.headers)
@@ -1189,14 +1189,14 @@ class Api(object):
     def delete_transmitter_device(self, transmitterID, deviceID):
         """
         Disconnects a transmitter from a device.
-    
+
         :param transmitterID: the transmitter UID
         :type transmitterID: string
         :param deviceID: the device UID
         :type deviceID: string
         :rtype: an empty dict(?)
         """
-    
+
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
         url = '{0}/transmitters/{1}/devices/{2}'.format(self.host, transmitterID, deviceID)
         _, data = self.perform_request('DELETE', url, data=data, headers=self.headers)
