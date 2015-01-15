@@ -43,7 +43,7 @@ class PubnubDataConnection(threading.Thread):
             ssl_on=True
         )
 
-        if self.hub.version >= "3.5.3":
+        if "daemon" in Pubnub.__init__.func_code.co_varnames:
             self.hub.daemon = True
 
         self.setDaemon(True)
