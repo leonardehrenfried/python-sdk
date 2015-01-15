@@ -1032,6 +1032,15 @@ class Api(object):
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
+    def post_device_data(self, device_id, data):
+        """
+        Sends device JSON formatted data for a device (eg. temperature readings).
+        """
+        # https://api.relayr.io/devices/<device_id>/data
+        url = '{0}/devices/{1}/data'.format(self.host, device_id)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
+
     def post_device_app(self, deviceID, appID):
         """
         Connects a device to an app.
