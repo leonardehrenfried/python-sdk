@@ -43,8 +43,8 @@ class PubnubDataConnection(threading.Thread):
             ssl_on=True
         )
 
-        self.hub.version >= "3.5.3":
-            hub.daemon = True
+        if self.hub.version >= "3.5.3":
+            self.hub.daemon = True
 
         self.setDaemon(True)
 
