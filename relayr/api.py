@@ -527,6 +527,18 @@ class Api(object):
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
+    def delete_wunderbar(self, transmitter_id):
+        """
+        Removes a Wunderbar identified by a master module.
+
+        :param transmitterId: the id of the master module
+        """
+
+        # https://api.relayr.io/wunderbars/%s
+        url = '{0}/wunderbars/{1}'.format(self.host, transmitter_id)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
+        return data
+
     def post_users_destroy(self, userID):
         """
         Removes all Wunderbars associated with a specific user.
@@ -1017,6 +1029,15 @@ class Api(object):
         """
         # https://api.relayr.io/devices/<deviceID>/cmd/<command>
         url = '{0}/devices/{1}/cmd/{2}'.format(self.host, deviceID, command)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
+
+    def post_device_data(self, device_id, data):
+        """
+        Sends device JSON formatted data for a device (eg. temperature readings).
+        """
+        # https://api.relayr.io/devices/<device_id>/data
+        url = '{0}/devices/{1}/data'.format(self.host, device_id)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
