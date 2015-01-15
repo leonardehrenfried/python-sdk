@@ -16,12 +16,12 @@ from relayr import config
 
 class PubnubDataConnection(threading.Thread):
     "A connection to a PubNub data hub running on its own thread."
-    
+
     def __init__(self, callback, credentials):
         """
         Opens a PubNub connection with a callback and a credentials dict.
 
-        :param callback: A callable to be called with two arguments: 
+        :param callback: A callable to be called with two arguments:
             message_content and channel_name.
         :type callback: A function or object implementing the ``__call__`` method.
         :param credentials: A set of key/value pairs to be passed to PubNub.
@@ -40,9 +40,11 @@ class PubnubDataConnection(threading.Thread):
             cipher_key=credentials.get('cipherKey', None),
             auth_key=credentials.get('authKey', None),
             secret_key=None,
-            ssl_on=True,
-            daemon=True
+            ssl_on=True
         )
+
+        self.hub.version >= "3.5.3":
+            hub.daemon = True
 
         self.setDaemon(True)
 
@@ -65,11 +67,11 @@ class PubnubDataConnection(threading.Thread):
 
         :param channel_name: The channel name.
         :type channel_name: string
-        :param callback: The callable to be called with two arguments: 
+        :param callback: The callable to be called with two arguments:
             message_content and channel_name.
         :type callback: A function or object implementing the ``__call__`` method.
         """
-        
+
         self.hub.subscribe(channel_name, callback)
 
     def unsubscribe(self, channel_name):
@@ -79,13 +81,13 @@ class PubnubDataConnection(threading.Thread):
         :param channel_name: the channel name
         :type channel_name: string
         """
-        
+
         self.hub.unsubscribe(channel_name)
 
 
 class MqttDataConnection(object):
     "..."
-    
+
     def __init__(self, callback, credentials):
         pass
 
