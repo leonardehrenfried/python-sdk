@@ -527,6 +527,18 @@ class Api(object):
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
+    def delete_wunderbar(self, transmitter_id):
+        """
+        Removes a Wunderbar identified by a master module.
+
+        :param transmitterId: the id of the master module
+        """
+
+        # https://api.relayr.io/wunderbars/%s
+        url = '{0}/wunderbars/{1}'.format(self.host, transmitter_id)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
+        return data
+
     def post_users_destroy(self, userID):
         """
         Removes all Wunderbars associated with a specific user.
