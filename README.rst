@@ -23,6 +23,17 @@ help of Pip:
 
     pip install relayr
 
+.. attention::
+
+    As of now this code uses `PubNub`_ and `its Python client`_ for obtaining data
+    from WunderBar devices via the relayr cloud. Unfortunately, after version
+    3.5.2 their Python code has shown a couple of nasty "features" like debugging
+    print statements (in Python 2 syntax) left in the code. We have reported that,
+    but haven't seen a fix, yet. So if you observer strange effects when receiving
+    data from your WunderBar devices we recommend setting ``Pubnub==3.5.2`` in the
+    ``requirements.txt`` file until there is a better fix from `PubNub`_. In any
+    case this issue will disappear soon, as we'll switch from PubNub to MQTT.
+
 
 Examples
 --------
@@ -67,3 +78,5 @@ our Developer Dashboard `Python section`_!
 .. _BlueZ: http://www.bluez.org/
 .. _Python section: https://developer.relayr.io/documents/Python/Introduction
 .. _relayr Dashboard: https://developer.relayr.io/dashboard/devices
+.. _Pubnub: http://www.pubnub.com/
+.. _its Python client: https://github.com/pubnub/python/
