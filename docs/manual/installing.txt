@@ -5,8 +5,8 @@ Installation
 
 This part of the documentation covers the installation of the relayr 
 library. If you are an experienced Python user or developer you will likely
-already be familiar with much of the information below. In case you are not you may find
-the below information useful.
+already be familiar with much of the information below and may want to skip this section. 
+In case you are new to Python you may find the below information useful.
 
 
 Installing the installer
@@ -29,8 +29,8 @@ Creating a virtual environment
 ------------------------------
 
 In order not to risk the existing
-Python installation we recommend creating a virtual Python environment
-(a ``virtualenv``) in which you can install the relayr library:
+Python installation we recommend that you create a virtual Python environment
+(a ``virtualenv``), where you can install the relayr library:
 
 .. code-block:: console
 
@@ -42,7 +42,7 @@ Python installation we recommend creating a virtual Python environment
 If ``virtualenv`` is not already installed on your system, you can install it
 with ``pip install virtualenv``. The above lines will create a subfolder
 named ``rvenv`` containing a separate Python installation. You can activate and
-deactivate this environment using the following:
+deactivate this environment using the following code:
 
 .. code-block:: console
 
@@ -66,7 +66,7 @@ above). This will install the latest version:
 
 You can also run a source distribution of a release from PyPI_ if you want to
 run the test suite and/or generate the documentation yourself (more about
-that see below). Just download a tarball of the sources and unpack as follows:
+this option below). Just download a tarball of the sources and unpack as follows:
 
 .. code-block:: console
 
@@ -81,8 +81,8 @@ Installing a development version
 
 The relayr library is hosted and developed on `GitHub
 <https://github.com/relayr/python-sdk>`_. If you wish to work with the
-development version of relayr, there are two ways (again, both recommended
-for a virtual environment). 
+development version of relayr, you have two options (again, both recommended
+for a virtual environment): 
 
 1. Checking out from the repository with git
 ............................................

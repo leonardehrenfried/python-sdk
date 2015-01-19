@@ -49,7 +49,7 @@ To determine the number of publishers e.g. it runs code similar to this
 ``demos/noise.py``
 -------------------------
 
-This script establishes a connection to a WunderBar microphone device, checks
+This script establishes a connection to a WunderBar noise level sensor device, checks
 the incoming noise level values for some time, compares them to a maximum
 threshold and sends a reminder, by email, to take action if needed.
 
@@ -72,7 +72,7 @@ Below you can see a version of that code stripped down to only a few lines
     conn.stop()
 
 When running (with the correct token and device ID) this should print incoming
-data from the microphone sensor with a time stamp and sound level in this manner:
+data from the noise level sensor with a time stamp and sound level in this manner:
 
 .. code-block:: console
 

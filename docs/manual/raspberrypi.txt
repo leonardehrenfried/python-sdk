@@ -7,16 +7,16 @@ Due to its small size, low price and power consumption and its general
 extensibility the Raspberry Pi (or any other similar device) is considered
 an interesting platform for projects related to the Internet of Things.
 
-More examples of use to come so stay tuned. 
+Examples of use to come so stay tuned! 
 
 
 Updating BlueZ
 --------------
 
 The version of BlueZ available for standard distributions for a Raspberry
-Pi like Raspbian may be old (prior to version 5) and thus unable to handle
+Pi such as Raspbian, may be old (prior to version 5) and thus incapable of handling
 Bluetooth LE well, if at all. It is therefore strongly recommended to install
-the most recent version using a procedure like the one below (compiling BlueZ
+the most recent version, using a procedure like the one below (compiling BlueZ
 on the Raspberry Pi itself takes about 20-30 minutes):
 
 .. code-block:: bash
