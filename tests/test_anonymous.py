@@ -92,8 +92,8 @@ class TestRequests(object):
             url = '%s/this-should-not-exist' % fix_anonymous.testset0['relayrAPI']
             resp = Api().perform_request('POST', url, data={'foo': 42, 'bar': 23})
         assert str(excinfo.value).startswith('URL could not be routed.')
-        assert '--data "foo=42&bar=23"' in str(excinfo.value) or \
-            '--data "bar=23&foo=42"' in str(excinfo.value)
+        assert '--data "{\\"foo\\": 42, \\"bar\\": 23}"' in str(excinfo.value) or \
+            '--data "{\\"bar\\": 23, \\"foo\\": 42}"' in str(excinfo.value)
 
 
 class TestAPIAnonymous(object):

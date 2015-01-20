@@ -51,7 +51,7 @@ def build_curl_call(method, url, data=None, headers=None):
     """
     Builds and returns a ``curl`` command for use on the command-line.
 
-    (The data parameter should already be urlencoded...) ## FIXME
+    The data parameter should be a simple JSON-serializable object.
     """
 
     command = "curl -X {0} {1}".format(method.upper(), url)
@@ -59,9 +59,7 @@ def build_curl_call(method, url, data=None, headers=None):
         for k, v in headers.items():
             command += ' -H "{0}: {1}"'.format(k, v)
     if data:
-        # Add body params (eg. --data "param1=value1&param2=value2")
-        # command += ' --data "{0}"'.format(urlencode(data))
-        command += ' --data "{0}"'.format(data)
+        command += " --data {0}".format(json.dumps(data))
     return command
 
 class Api(object):
@@ -158,7 +156,7 @@ class Api(object):
         else:
             args = (resp.json()['message'], method.upper(), url)
             msg = "{0} - {1} {2}".format(*args)
-            command = build_curl_call(method, url, urlencoded_data, headers)
+            command = build_curl_call(method, url, data, headers)
             msg = "%s - %s" % (msg, command)
             raise RelayrApiException(msg)
 
@@ -538,6 +536,9 @@ class Api(object):
         url = '{0}/wunderbars/{1}'.format(self.host, transmitter_id)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
+
+    ## TODO: 
+    ## def delete_transmitter(self, transmitter_id):
 
     def post_users_destroy(self, userID):
         """
