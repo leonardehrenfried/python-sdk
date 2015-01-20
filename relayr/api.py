@@ -529,7 +529,9 @@ class Api(object):
 
     def delete_wunderbar(self, transmitter_id):
         """
-        Removes a Wunderbar identified by a master module.
+        Removes a Wunderbar identified by its master module. This means
+        that in addition to the transmitter (the master module) all associated
+        devices (sensors) are being deleted.
 
         :param transmitterId: the id of the master module
         """
