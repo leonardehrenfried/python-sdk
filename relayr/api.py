@@ -87,7 +87,7 @@ class Api(object):
 
     .. code-block:: python
 
-        # Creates an anonymous client and calls simple API endpoints:
+        # Create an anonymous client and call simple API endpoints:
         from relayr.api import Api
         a = Api()
         assert a.get_server_status() == {'database': 'ok'}
@@ -99,8 +99,9 @@ class Api(object):
         """
         Object construction.
 
-        :arg token: a token generated on the relayr platform for a combination of
+        :param token: A token generated on the relayr platform for a combination of
             a relayr user and application.
+        :type token: string
         """
         self.token = token
         self.host = config.relayrAPI
@@ -130,6 +131,16 @@ class Api(object):
     def perform_request(self, method, url, data=None, headers=None):
         """
         Perform an API call and return a JSON result as Python data structure.
+
+        :param method: HTTP request method, ``GET``, ``POST``, etc.
+        :type method: string
+        :param url: Full HTTP path.
+        :type url: string
+        :param data: Data to be transmitted, usually *posted*.
+        :type data: object serializable as JSON
+        :param headers: Additional HTTP request headers.
+        :type headers: dictionary
+        :rtype: string
 
         Query parameters are expected in the ``url`` parameter.
         For returned status codes other than 2XX a ``RelayrApiException``
@@ -217,9 +228,17 @@ class Api(object):
 
     def post_oauth2_token(self, clientID, clientSecret, code, redirectURI):
         """
-        User:token from tmp code. (?)
+        Generate and return an OAuth2 access token from supplied parameters.
 
-        Generate a user token from supplied parameters
+        :param clientID: The client's UUID.
+        :type clientID: string
+        :param clientSecret: The OAuth client secret.
+        :type clientSecret: string
+        :param code: The OAuth authorization code (valid for five minutes).
+        :type code: string
+        :param redirectURI: The redirect URI.
+        :type redirectURI: string
+        :rtype: dict with two fields, "access_token" and "token_type" (with string values for both)
         """
         data = {
             "client_id": clientID,
