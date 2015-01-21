@@ -346,9 +346,14 @@ class Device(object):
         
         :rtype: A list of apps.
         """
+        ## FIXME: return app objects
+        # res = self.client.api.get_device_apps(self.id)
+        # return res
 
-        res = self.client.api.get_device_apps(self.id)
-        return res
+        for app_json in self.client.api.get_device_apps(self.id):
+            app = App(id=app_json['id'], client=self.client)
+            app.get_info()
+            yield app
 
     def connect_to_app(self, app):
         """
@@ -401,10 +406,20 @@ class Device(object):
         :param command: the command to be sent
         :type command: string
         :param data: the command data to be sent
-        :type command: dict
+        :type data: dict
         """
         
         res = self.client.api.post_device_command(self.id, command, data)
+        return res
+
+    def send_data(self, data):
+        """
+        Sends a data pacakge to the device.
+
+        :param data: the data to be sent
+        :type data: dict
+        """
+        res = self.client.api.post_device_data(self.id, data)
         return res
 
     def delete(self):
