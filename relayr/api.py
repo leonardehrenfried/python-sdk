@@ -51,7 +51,24 @@ def build_curl_call(method, url, data=None, headers=None):
     """
     Builds and returns a ``curl`` command for use on the command-line.
 
-    The data parameter should be a simple JSON-serializable object.
+    :param method: HTTP request method, ``GET``, ``POST``, etc.
+    :type method: string
+    :param url: Full HTTP path.
+    :type url: string
+    :param data: Data to be transmitted, usually *posted*.
+    :type data: object serializable as JSON
+    :param headers: Additional HTTP request headers.
+    :type headers: dictionary
+    :rtype: string
+
+    Example:
+
+    .. code-block:: python
+
+        cmd = build_curl_call('POST', 'http://foo.com/bar', data={'x': 42},
+                headers={'SUPER_SECRET_KEY': '123'})
+        print(cmd)
+        curl -X POST http://foo.com/bar -H "SUPER_SECRET_KEY: 123" --data "{\"x\": 42}"
     """
 
     command = "curl -X {0} {1}".format(method.upper(), url)
@@ -59,7 +76,8 @@ def build_curl_call(method, url, data=None, headers=None):
         for k, v in headers.items():
             command += ' -H "{0}: {1}"'.format(k, v)
     if data:
-        command += " --data {0}".format(json.dumps(data))
+        jsdata = json.dumps(data)
+        command += " --data {0}".format(json.dumps(jsdata))
     return command
 
 class Api(object):
@@ -125,17 +143,18 @@ class Api(object):
             self.logger.info("API request: " + command)
 
         urlencoded_data = None
+        json_data = 'null'
         if data is not None:
             urlencoded_data = urlencode(data)
-            data = json.dumps(data)
+            json_data = json.dumps(data)
             try:
-                data = data.encode('utf-8')
+                json_data = json_data.encode('utf-8')
             except (UnicodeDecodeError, AttributeError):
                 # bytes/str - no need to re-encode
                 pass
 
         func = getattr(requests, method.lower())
-        resp = func(url, data=data or '', headers=headers or {})
+        resp = func(url, data=json_data or '', headers=headers or {})
         resp.connection.close()
 
         if config.LOG:
@@ -159,6 +178,7 @@ class Api(object):
             command = build_curl_call(method, url, data, headers)
             msg = "%s - %s" % (msg, command)
             raise RelayrApiException(msg)
+
 
     # ..............................................................................
     # System
@@ -525,22 +545,20 @@ class Api(object):
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
-    def delete_wunderbar(self, transmitter_id):
+    def delete_wunderbar(self, transmitterID):
         """
         Removes a Wunderbar identified by its master module. This means
         that in addition to the transmitter (the master module) all associated
         devices (sensors) are being deleted.
 
-        :param transmitterId: the id of the master module
+        :param transmitterID: the UID of the master module
+        :type transmitterID: string
         """
 
         # https://api.relayr.io/wunderbars/%s
-        url = '{0}/wunderbars/{1}'.format(self.host, transmitter_id)
+        url = '{0}/wunderbars/{1}'.format(self.host, transmitterID)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
-
-    ## TODO: 
-    ## def delete_transmitter(self, transmitter_id):
 
     def post_users_destroy(self, userID):
         """
@@ -676,7 +694,6 @@ class Api(object):
 
         :param appID: the application's UID
         :type appID: string
-
         """
 
         # https://api.relayr.io/apps/<appID>

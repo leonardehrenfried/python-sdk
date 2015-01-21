@@ -133,9 +133,14 @@ class TestAPI(object):
     def test_public_device_credentials(self, fix_registered):
         "Test get credentials for subscribing to a public device."
         from relayr import Client
+        from relayr.resources import Device
         token = fix_registered.testset1['token']
         c = Client(token=token)
         deviceID = fix_registered.testset1['deviceID']
+        dev = Device(id=deviceID, client=c)
+        dev.get_info()
+        if not dev.public:
+            dev.update(public=True)
         creds = c.api.post_devices_public_subscription(deviceID)
         for key in 'authKey subscribeKey cipherKey channel'.split():
             assert key in creds

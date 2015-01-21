@@ -334,6 +334,7 @@ class Device(object):
         :param public: a flag for making the device public
         :type redirectUri: boolean
         """
+
         res = self.client.api.patch_device(self.id, deviceDescription=description,
             deviceName=name, deviceModel=model, isDevicePublic=public)
         for k in res:
@@ -346,10 +347,6 @@ class Device(object):
         
         :rtype: A list of apps.
         """
-        ## FIXME: return app objects
-        # res = self.client.api.get_device_apps(self.id)
-        # return res
-
         for app_json in self.client.api.get_device_apps(self.id):
             app = App(id=app_json['id'], client=self.client)
             app.get_info()

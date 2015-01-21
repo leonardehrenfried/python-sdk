@@ -36,6 +36,28 @@ class TestInstallation(object):
         from relayr import config
 
 
+class TestApiFunctions(object):
+    "Test module functions."
+
+    def test_build_curl_call_dict(self, fix_anonymous):
+        "Test building curl debugging command with data dict."
+        from relayr.api import build_curl_call
+        res = build_curl_call('POST', 'http://foo.com/bar',
+            data={'x': 42},
+            headers={'SUPER_SECRET_KEY': '123'})
+        exp = 'curl -X POST http://foo.com/bar -H "SUPER_SECRET_KEY: 123" --data "{\\"x\\": 42}"'
+        assert res == exp
+
+    def test_build_curl_call_list(self, fix_anonymous):
+        "Test building curl debugging command with data list."
+        from relayr.api import build_curl_call
+        res = build_curl_call('POST', 'http://foo.com/bar',
+            data=[None, 23, "42"],
+            headers={'SUPER_SECRET_KEY': '123'})
+        exp = 'curl -X POST http://foo.com/bar -H "SUPER_SECRET_KEY: 123" --data "[null, 23, \\"42\\"]"'
+        assert res == exp
+
+
 class TestRawAPI(object):
     "Test raw HTTP access to some API endpoints."
 
