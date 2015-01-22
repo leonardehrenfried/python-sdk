@@ -1197,7 +1197,7 @@ class Api(object):
         :rtype: an empty dict(?)
         """
         data = {}
-        if owner is not None:
+        if ownerID is not None:
             data.update(owner=ownerID)
         if name is not None:
             data.update(name=name)
