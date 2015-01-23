@@ -20,7 +20,6 @@ import requests
 from relayr import config
 from relayr.version import __version__
 from relayr.exceptions import RelayrApiException
-from relayr.compat import urlencode
 
 
 def create_logger(sender):
@@ -152,10 +151,8 @@ class Api(object):
             command = build_curl_call(method, url, data, headers)
             self.logger.info("API request: " + command)
 
-        urlencoded_data = None
         json_data = 'null'
         if data is not None:
-            urlencoded_data = urlencode(data)
             json_data = json.dumps(data)
             try:
                 json_data = json_data.encode('utf-8')
@@ -296,6 +293,38 @@ class Api(object):
         # https://api.relayr.io/oauth2/appdev-token/<appID>
         url = '{0}/oauth2/appdev-token/{1}'.format(self.host, appID)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
+        return data
+
+    def post_client_log(self, log_messages):
+        """
+        Log a list of messages (only for internal use).
+
+        :param log_messages: The messages to be looged.
+        :type log_messages: A list of dicts with fields as in the example below.
+        :rtype: None
+
+        The timestamp field must be formatted according to ISO 8601, but
+        otherwise there are no restrictions.
+
+        Sample data input::
+
+            [{
+                "timestamp"  : "1997-07-16T19:20:30.45+01:00",
+                "message" : "Heavy, unexpected rain shower.",
+                "connection" : {
+                    "internet" : True,
+                    "netScope" : "WAN",
+                    "netType"  : "LTE"
+                }
+             },
+             {
+                ...
+             }
+            ]
+        """
+        # https://api.relayr.io/client/log
+        url = '{0}/client/log'.format(self.host)
+        _, data = self.perform_request('POST', url, data=log_messages, headers=self.headers)
         return data
 
     # ..............................................................................
