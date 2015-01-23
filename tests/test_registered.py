@@ -139,9 +139,13 @@ class TestAPI(object):
         deviceID = fix_registered.testset1['deviceID']
         dev = Device(id=deviceID, client=c)
         dev.get_info()
+        made_public = False
         if not dev.public:
             dev.update(public=True)
+            made_public = True
         creds = c.api.post_devices_public_subscription(deviceID)
+        if made_public:
+            dev.update(public=False)
         for key in 'authKey subscribeKey cipherKey channel'.split():
             assert key in creds
 
@@ -328,3 +332,30 @@ class TestPublishers(object):
         app_list = list(apps)
         assert len(app_list) >= 1
         assert hasattr(app_list[0], 'clientId')
+
+
+class TestInternal(object):
+    "Tests for internal functionality."
+
+    def test_client_log(self, fix_registered):
+        "Test logging some messages."
+        token = fix_registered.testset1['token']
+        import datetime
+        from relayr import Client
+        c = Client(token=token)
+        now = datetime.datetime.now()
+        before = now - datetime.timedelta(minutes=25)
+        messages = [
+            {
+                "timestamp": before.isoformat(),
+                "message": "heavy rain shower",
+                "connection": { "internet": True}
+            },
+            {
+                "timestamp": now.isoformat(),
+                "message": "sunshine with rainbow",
+                "connection": { "internet": True}
+            },
+        ]
+        res = c.api.post_client_log(messages)
+        assert res == None
