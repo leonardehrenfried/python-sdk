@@ -335,8 +335,8 @@ class Device(object):
         :type redirectUri: boolean
         """
 
-        res = self.client.api.patch_device(self.id, deviceDescription=description,
-            deviceName=name, deviceModel=model, isDevicePublic=public)
+        res = self.client.api.patch_device(self.id, description=description,
+            name=name, model=model, public=public)
         for k in res:
             setattr(self, k, res[k])
         return self
