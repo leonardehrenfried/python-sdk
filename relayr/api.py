@@ -1048,7 +1048,7 @@ class Api(object):
         :rtype: channelID with credentials to connect to it
         """
 
-         url = '{0}/channels'.format(self.host)
+        url = '{0}/channels'.format(self.host)
         data = {'deviceId': deviceID, 'transport': transport}
         _, res = self.perform_request('POST', url,
                                       data=data, headers = self.headers)
