@@ -1037,36 +1037,52 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
-    def create_channel(self, deviceID, transport):
+    def post_channel(self, deviceID, transport):
         """
-        Create a new channel to send device data to an end user with
-        generated credentials for connecting to it.
+        Create a new channel to let the current user receive device data.
+
+        The return value is a channel UUID plus credentials to connect to it.
+
         :param deviceID: the device UUID
         :type deviceID: string
         :param transport: transport for channel (mqtt, websockets, etc.)
         :type transport: string
-        :rtype: channelID with credentials to connect to it
+        :rtype: dict with channel credentials to connect to the device
+
+        Example result (for transport='mqtt')::
+
+            {
+                'channelId': u'62e2ceb8-a63f-11e4-8792-6c400890724a',
+                'credentials': {
+                    'password': '012345678901',
+                    'topic': '/v1/62e2ceb8-a63f-11e4-8792-6c400890724a',
+                    'user': '62e2ceb8-a63f-11e4-8792-6c400890724a'
+                }
+            }
         """
         url = '{0}/channels'.format(self.host)
         data = {'deviceId': deviceID, 'transport': transport}
         _, res = self.perform_request('POST', url,
-                                      data=data, headers = self.headers)
+                                      data=data, headers=self.headers)
         return res
 
-    def delete_channel(self, channelID):
+    def delete_channel_id(self, channelID):
         """
-        Delete an existing channel by its id.
+        Delete an existing specific channel.
         
         :param channelID: the UUID of the channel
         :type channelID: string
+        :rtype: None
+
+        Raises ``exceptions.RelayrApiException`` for non-existing channelID.
         """
         url = '{0}/channels/{1}'.format(self.host, channelID)
-        _, res = self.perform_request('DELETE', url, headers = self.headers)
+        _, res = self.perform_request('DELETE', url, headers=self.headers)
         return res
 
-    def delete_channel_batch(self, deviceID = None, transport = None):
+    def delete_channels_device_transport(self, deviceID=None, transport=None):
         """
-        Delete channels by criteria.
+        Delete all existing channels for the given device ID and/or transport.
         
         :param deviceID: the device UUID
         :type deviceID: string
@@ -1081,7 +1097,7 @@ class Api(object):
         if transport is not None:
             data['transport'] = transport
         _, res = self.perform_request('DELETE', url,
-                                      data = data, headers = self.headers)
+                                      data=data, headers=self.headers)
             
     ## TODO: remove in version 0.3.0
     def post_devices_supscription(self, deviceID):
