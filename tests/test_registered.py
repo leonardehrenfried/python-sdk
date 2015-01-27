@@ -22,6 +22,31 @@ running the tests!
 import pytest
 
 
+class TestChannelCredentials(object):
+    "Test channel credentials, low-level."
+
+    def test_create_delete(self, fix_registered):
+        "Test create and delete channel credentials."
+        from relayr import Client
+        from relayr.exceptions import RelayrApiException
+        token = fix_registered.testset1['token']
+        c = Client(token=token)
+        deviceID = fix_registered.testset1['deviceID']
+        # create channel creds
+        creds = c.api.post_channel(deviceID, 'mqtt')
+        assert type(creds) == dict
+        assert set(['channelId', 'credentials']).issubset(set(creds.keys()))
+        channelId = creds['channelId']
+        # delete channel creds
+        res = c.api.delete_channel_id(channelId)
+        assert res == None
+        # try delete again
+        with pytest.raises(RelayrApiException) as excinfo:
+            res = c.api.delete_channel_id(channelId)
+        msg = 'Channel with id %s not found' % channelId
+        assert msg in str(excinfo.value)
+
+
 class TestDeviceBookmarks(object):
     "Test device bookmarks."
 
