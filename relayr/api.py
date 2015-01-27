@@ -1037,52 +1037,6 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
-    def create_channel(self, deviceID, transport):
-        """
-        Create a new channel to send device data to an end user with
-        generated credentials for connecting to it.
-        :param deviceID: the device UUID
-        :type deviceID: string
-        :param transport: transport for channel (mqtt, websockets, etc.)
-        :type transport: string
-        :rtype: channelID with credentials to connect to it
-        """
-        url = '{0}/channels'.format(self.host)
-        data = {'deviceId': deviceID, 'transport': transport}
-        _, res = self.perform_request('POST', url,
-                                      data=data, headers = self.headers)
-        return res
-
-    def delete_channel(self, channelID):
-        """
-        Delete an existing channel by its id.
-        
-        :param channelID: the UUID of the channel
-        :type channelID: string
-        """
-        url = '{0}/channels/{1}'.format(self.host, channelID)
-        _, res = self.perform_request('DELETE', url, headers = self.headers)
-        return res
-
-    def delete_channel_batch(self, deviceID = None, transport = None):
-        """
-        Delete channels by criteria.
-        
-        :param deviceID: the device UUID
-        :type deviceID: string
-        :param transport: transport for channel (mqtt, websockets, etc.)
-        :type transport: string
-        :rtype: list of deleted channelIDs
-        """
-        url = '{0}/channels'.format(self.host)
-        data = {}
-        if deviceID is not None:
-            data['deviceId'] = deviceID
-        if transport is not None:
-            data['transport'] = transport
-        _, res = self.perform_request('DELETE', url,
-                                      data = data, headers = self.headers)
-            
     ## TODO: remove in version 0.3.0
     def post_devices_supscription(self, deviceID):
         """
