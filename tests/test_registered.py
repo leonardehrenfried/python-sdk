@@ -25,21 +25,29 @@ import pytest
 class TestChannelCredentials(object):
     "Test channel credentials, low-level."
 
-    def test_create_delete(self, fix_registered):
-        "Test create and delete channel credentials."
+    def test_create_list_delete(self, fix_registered):
+        "Test create, list and delete channel credentials."
         from relayr import Client
         from relayr.exceptions import RelayrApiException
         token = fix_registered.testset1['token']
         c = Client(token=token)
         deviceID = fix_registered.testset1['deviceID']
+
         # create channel creds
         creds = c.api.post_channel(deviceID, 'mqtt')
         assert type(creds) == dict
         assert set(['channelId', 'credentials']).issubset(set(creds.keys()))
         channelId = creds['channelId']
+
+        # list channels for device
+        info = c.api.get_device_channels(deviceID)
+        assert info['deviceId'] == deviceID
+        assert channelId in [ch['channelId'] for ch in info['channels']]
+
         # delete channel creds
         res = c.api.delete_channel_id(channelId)
         assert res == None
+
         # try delete again
         with pytest.raises(RelayrApiException) as excinfo:
             res = c.api.delete_channel_id(channelId)
