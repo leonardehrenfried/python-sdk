@@ -1099,6 +1099,36 @@ class Api(object):
         _, res = self.perform_request('DELETE', url,
                                       data=data, headers=self.headers)
             
+    def get_device_channels(self, deviceID):
+        """
+        Get all existing channels for a specific device.
+
+        :param deviceID: the device UUID
+        :type deviceID: string
+        :rtype: dict with a list of attributes for each existing channel
+
+        Example output::
+
+            {
+              'deviceId': '...',
+              'channels': [
+                {
+                  'channelId': '...',
+                  'transport': 'mqtt',
+                  'appId': '...'
+                },
+                {
+                  'channelId': '...',
+                  'transport': 'mqtt',
+                  'appId': '...'
+                }
+              ]
+            }
+        """
+        url = '{0}/devices/{1}/channels'.format(self.host, deviceID)
+        _, res = self.perform_request('GET', url, headers=self.headers)
+        return res
+
     ## TODO: remove in version 0.3.0
     def post_devices_supscription(self, deviceID):
         """
