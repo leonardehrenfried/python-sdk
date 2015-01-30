@@ -321,22 +321,23 @@ class Device(object):
                 setattr(self, k, res[k])
         return self
 
-    def update(self, description=None, name=None, model=None, public=None):
+    def update(self, description=None, name=None, modelID=None, public=None):
         """
-        Updates certain fields in the device description.
+        Updates certain fields in the device information.
         
         :param description: the description to be set
         :type description: string
         :param name: the user name to be set
         :type name: string
-        :param model: the device model to be set
-        :type name: string?
-        :param public: a flag for making the device public
-        :type redirectUri: boolean
+        :param modelID: the device model to be set
+        :type modelID: string?
+        :param public: a Boolean flag for making the device public
+        :type public: bool
+        :rtype: self
         """
 
         res = self.client.api.patch_device(self.id, description=description,
-            name=name, model=model, public=public)
+            name=name, modelID=modelID, public=public)
         for k in res:
             setattr(self, k, res[k])
         return self
