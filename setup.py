@@ -3,6 +3,7 @@
 
 import os
 import sys
+import platform
 
 from setuptools import setup, Command
 
@@ -32,6 +33,11 @@ with open('README.rst') as f:
 
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
+
+# Add pexpect only if not running on Windows (not strictly needed
+# except for the *very* exerimental file ble.py).
+if platform.system() != 'Windows':
+    install_requires.append('pexpect')
 
 if PY_VERSION == 2:
     with open('requirements_py2.txt') as f:
