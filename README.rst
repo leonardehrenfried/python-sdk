@@ -1,12 +1,12 @@
 The relayr Python Library
 =========================
 
-Welcome to the relayr Python Library. The repository provides you Python
+Welcome to the relayr Python Library. The repository provides Python
 developers with programmatic access points to the relayr platform.
 
 These include access to the relayr cloud via the relayr API_ as well as 
 direct connection to the relayr WunderBar sensors, via Bluetooth Low
-Energy (using BlueZ_ on Linux).
+Energy (using BlueZ_ on Linux, still very experimental).
 
 
 Installation
@@ -25,14 +25,10 @@ help of Pip:
 
 .. attention::
 
-    As of now this code uses `PubNub`_ and `its Python client`_ for obtaining data
-    from WunderBar devices via the relayr cloud. Unfortunately, after version
-    3.5.2 their Python code has shown a couple of nasty "features" like debugging
-    print statements (in Python 2 syntax) left in the code. We have reported that,
-    but haven't seen a fix, yet. So if you observer strange effects when receiving
-    data from your WunderBar devices we recommend setting ``Pubnub==3.5.2`` in the
-    ``requirements.txt`` file until there is a better fix from `PubNub`_. In any
-    case this issue will disappear soon, as we'll switch from PubNub to MQTT.
+    There is a known SSL-related bug when accessing data via MQTT on Python 3.
+    We're working on it, please stay tuned! As a workaround, accessing data via
+    the old PubNub channels should still work, also in Python 3, see the mini
+    examples below.
 
 
 Examples
@@ -42,6 +38,27 @@ Receive a 10 second data stream, from one of your WunderBar sensors (device). In
 example below the device does not have to be a public one in order to be used. 
 You can obtain your device IDs from the relayr Dashboard `My Devices section`_:
 
+MQTT_ style (new)
+.................
+
+.. code-block:: python
+
+    import time
+    from relayr import Client
+    from relayr.dataconnection import MqttStream
+    c = Client(token='<my_access_token>')
+    dev = c.get_device(id='<my_device_id>')
+    def mqtt_callback(topic, payload):
+        print('%s %s' % (topic, payload))
+    stream = MqttStream(mqtt_callback, [dev])
+    stream.start()
+    time.sleep(10)
+    stream.stop()
+
+
+PubNub_ style (old)
+...................
+
 .. code-block:: python
 
     import time
@@ -50,14 +67,16 @@ You can obtain your device IDs from the relayr Dashboard `My Devices section`_:
     dev = c.get_device(id='<my_device_id>').get_info()
     user = c.get_user()
     app = c.get_app()
-    def callback(message, channel):
+    def pubnub_callback(message, channel):
         print(repr(message), type(message))
-    conn = user.connect_device(app, dev, callback)
+    conn = user.connect_device(app, dev, pubnub_callback)
     conn.start()
     time.sleep(10)
     conn.stop()
 
-Switch a device's LED on/off :
+
+Switch a device's LED on/off
+............................
 
 .. code-block:: python
 
@@ -79,5 +98,6 @@ our Developer Dashboard `Python section`_!
 .. _BlueZ: http://www.bluez.org/
 .. _Python section: https://developer.relayr.io/documents/Python/Introduction
 .. _My Devices section: https://developer.relayr.io/dashboard/devices
-.. _Pubnub: http://www.pubnub.com/
+.. _PubNub: http://www.pubnub.com/
+.. _MQTT: http://mqtt.org/
 .. _its Python client: https://github.com/pubnub/python/
