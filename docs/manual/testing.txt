@@ -38,15 +38,15 @@ correctly (the ``s`` indicates a skipped test, here because of platform limitati
 
     =========================== test session starts ============================
     platform darwin -- Python 2.7.8 -- py-1.4.26 -- pytest-2.6.4
-    collected 41 items
+    collected 49 items
 
-    tests/test_anonymous.py ..........
-    tests/test_bluetooth.py sss
+    tests/test_anonymous.py ............
+    tests/test_bluetooth.py ss
     tests/test_config.py .
-    tests/test_data_access.py .
-    tests/test_registered.py .........................
+    tests/test_data_access.py ...ss.
+    tests/test_registered.py ............................
 
-    ================== 38 passed, 3 skipped in 80.59 seconds ===================
+    ================== 45 passed, 4 skipped in 103.02 seconds ==================
 
 Naturally, you can add more verbosity, run selected test modules or methods
 if desired, run tests for different Python versions simultaneously, and much more.

@@ -9,4 +9,4 @@ This module contains the package version number.
 # 2) we can import it in setup.py for the same reason
 # 3) we can import it into the relayr module
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'

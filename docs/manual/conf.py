@@ -65,7 +65,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Relayr Python Client'
-copyright = u'2014, relayr.io'
+copyright = u'2014-2015, relayr.io'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -287,7 +287,7 @@ texinfo_documents = [
 epub_title = u'Relayr Python Client'
 epub_author = u'relayr.io'
 epub_publisher = u'relayr.io'
-epub_copyright = u'2014, relayr.io'
+epub_copyright = u'2014-2015, relayr.io'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'Relayr Python Client'
