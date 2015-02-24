@@ -59,7 +59,7 @@ class User(object):
     def connect_device(self, app, device, callback):
         "Opens and returns a connection to the data provider."
 
-        creds = self.client.api.post_devices_subscription(app.id, device.id)
+        creds = self.client.api.post_apps_devices(app.id, device.id)
         return Connection(callback, creds)
 
     def connect_public_device(self, device, callback):
@@ -383,7 +383,7 @@ class Device(object):
         """
         Subscribes a user to a device.
         """
-        creds = self.client.api.post_devices_subscription(appID, self.id)
+        creds = self.client.api.post_apps_devices(appID, self.id)
         return Connection(callback, creds)
 
     def connect_to_public_device(self, id, callback):
@@ -440,6 +440,27 @@ class Device(object):
         """
         self.send_command('led', {'cmd': int(bool)})
         return self
+
+    # new methods for transport channels
+
+    def create_channel(self, transport):
+        res = self.client.api.post_channel(self.id, transport)
+        return res
+
+    def delete_channel(self, channelID):
+        res = self.client.api.delete_channel_id(channelID)
+        return res
+
+    def delete_channels(self):
+        # should be rather on app or user...
+        # api.delete_channels_device_transport(deviceID, transport)
+        msg = 'This method should be rather in the class App or User...'
+        raise NotImplementedError(msg)
+
+    def list_channels(self):
+        res = self.client.api.get_device_channels(self.id)
+        return res
+
 
 class DeviceModel(object):
     """

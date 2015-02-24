@@ -1003,9 +1003,7 @@ class Api(object):
           "model": modelID,
           "public": public
         }
-        for k, v in data.items():
-            if v is None:
-                del data[k]
+        data = {k: data[k] for k in data if not data[k] is None}
         # https://api.relayr.io/devices/%s
         url = '{0}/devices/{1}'.format(self.host, deviceID)
         _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
@@ -1164,6 +1162,15 @@ class Api(object):
 
     def post_devices_subscription(self, appID, deviceID):
         """
+        Deprecated method, replaced by ``post_apps_devices``.
+
+        This will be removed in version 0.3.0.
+        """
+        if config.LOG:
+            self.logger.info("Deprecated method 'post_devices_supscription' called. Please use 'post_apps_devices' instead.")
+        return self.post_apps_devices(appID, deviceID)
+
+        """
         Subscribe the user to a specific application and device.
 
         :param appID: the app's UUID
@@ -1180,11 +1187,36 @@ class Api(object):
                 "channel": "...",
                 "subscribeKey": "sub-c-..."
             }
-        """
         # https://api.relayr.io/apps/%s/devices/%s/subscription
         url = '{0}/apps/{1}/devices/{2}/subscription'.format(self.host, appID, deviceID)
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
+        """
+
+    def post_apps_devices(self, appID, deviceID):
+        """
+        Return PubNub credentials for subscribing to a specific application and device.
+
+        :param appID: the app's UUID
+        :type appID: string
+        :param deviceID: the device's UUID
+        :type deviceID: string
+        :rtype: dict with connection credentials
+
+        Sample result (anonymized values)::
+
+            {
+                "authKey": "...",
+                "cipherKey": "...",
+                "channel": "...",
+                "subscribeKey": "sub-c-..."
+            }
+        """
+        # https://api.relayr.io/apps/%s/devices/%s
+        url = '{0}/apps/{1}/devices/{2}'.format(self.host, appID, deviceID)
+        _, data = self.perform_request('POST', url, headers=self.headers)
+        return data
+
 
     def post_device_command(self, deviceID, command, data):
         """
