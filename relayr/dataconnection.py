@@ -148,8 +148,7 @@ class MqttStream(threading.Thread):
         """
         if not self._stop_event.is_set():
             for t in self.topics:
-                # self.client.unsubscribe(t.encode('utf-8'))
-                self.client.unsubscribe(t)
+                self.client.unsubscribe(t.encode('utf-8'))
         self._stop_event.set()
         self.client.disconnect()
 
