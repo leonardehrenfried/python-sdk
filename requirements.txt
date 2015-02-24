@@ -1,5 +1,4 @@
 requests
-pubnub
-pycrypto
+pubnub==3.7.1
 termcolor
-pexpect
+paho-mqtt==1.1
