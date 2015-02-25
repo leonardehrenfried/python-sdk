@@ -19,6 +19,7 @@ import requests
 
 from relayr import config
 from relayr.version import __version__
+from relayr.compat import PY26
 from relayr.exceptions import RelayrApiException
 
 
@@ -1003,7 +1004,12 @@ class Api(object):
           "model": modelID,
           "public": public
         }
-        data = {k: data[k] for k in data if not data[k] is None}
+        # filter data (compatible with Python 2.6)
+        data1 = {}
+        for k, v in data.items():
+            if v != None:
+                data1[k] = v
+        data = data1
         # https://api.relayr.io/devices/%s
         url = '{0}/devices/{1}'.format(self.host, deviceID)
         _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
