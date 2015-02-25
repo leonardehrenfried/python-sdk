@@ -1224,21 +1224,19 @@ class Api(object):
         return data
 
 
-    def post_device_command(self, deviceID, command, data):
+    def post_device_command(self, deviceID, command):
         """
         Send a command to a specific device.
 
         :param deviceID: the device's UUID
         :type deviceID: string
-        :param command: the command name
-        :type command: string
-        :param data: the command data
-        :type data: anything serializable as JSON
+        :param command: the command to be sent
+        :type command: dict
         :rtype: dict with connection credentials
         """
         # https://api.relayr.io/devices/<deviceID>/cmd/<command>
-        url = '{0}/devices/{1}/cmd/{2}'.format(self.host, deviceID, command)
-        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        url = '{0}/devices/{1}/cmd'.format(self.host, deviceID)
+        _, data = self.perform_request('POST', url, data=command, headers=self.headers)
         return data
 
     def post_device_data(self, deviceID, data):

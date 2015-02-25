@@ -397,17 +397,15 @@ class Device(object):
         creds = self.client.api.post_devices_public_subscription(self.id)
         return Connection(callback, creds)
 
-    def send_command(self, command, data):
+    def send_command(self, command):
         """
         Sends a command to the device.
 
-        :param command: the command to be sent
-        :type command: string
-        :param data: the command data to be sent
-        :type data: dict
+        :param command: the command to be sent (containing three key strings: 'path', 'command' and 'value')
+        :type command: dict
         """
         
-        res = self.client.api.post_device_command(self.id, command, data)
+        res = self.client.api.post_device_command(self.id, command)
         return res
 
     def send_data(self, data):
