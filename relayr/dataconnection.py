@@ -121,16 +121,16 @@ class MqttStream(threading.Thread):
         """
         Fetch certificate for accessing MQTT server and cache it.
         """
-        folder = config.RELAYR_FOLDER
+        folder = expanduser(config.RELAYR_FOLDER)
         cert_url = config.MQTT_CERT_URL
         cert_filename = basename(cert_url)
-        if not exists(expanduser(folder)):
-            os.makedirs(expanduser(folder))
-        if not exists(join(expanduser(folder), cert_filename)):
+        if not exists(folder):
+            os.makedirs(folder)
+        if not exists(join(folder, cert_filename)):
             resp = requests.get(cert_url)
             if resp.status_code == 200:
                 cert = resp.content
-                open(join(expanduser(folder), cert_filename), 'w').write(cert)
+                open(join(folder, cert_filename), 'w').write(cert)
 
     def run(self):
         """
@@ -147,13 +147,12 @@ class MqttStream(threading.Thread):
 
         # only encryption, no authentication
         c.tls_insecure_set(True)
-        # null_file = '/dev/null' if platform.system() != 'Windows' else 'nul'
-        folder = config.RELAYR_FOLDER
+        folder = expanduser(config.RELAYR_FOLDER)
         cert_url = config.MQTT_CERT_URL
         cert_filename = basename(cert_url)
-        if not exists(join(expanduser(folder), cert_filename)):
+        if not exists(join(folder, cert_filename)):
             self._fetch_certificate()
-        cert_path = join(expanduser(folder), cert_filename)
+        cert_path = join(folder, cert_filename)
         c.tls_set(ca_certs=cert_path)
 
         try:
@@ -199,7 +198,13 @@ class MqttStream(threading.Thread):
         pass
 
     def on_message(self, client, userdata, msg):
-        self.callback(msg.topic, msg.payload)
+        """
+        Pass the message topic and payload as strings to our callback.
+        """
+        if PY2:
+            self.callback(msg.topic, msg.payload)
+        else:
+            self.callback(msg.topic, msg.payload.decode("utf-8"))
 
     def add_device(self, device):
         "Add a specific device to the MQTT connection to receive data from."
