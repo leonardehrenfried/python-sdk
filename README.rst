@@ -23,6 +23,10 @@ help of Pip:
 
     pip install relayr
 
+.. attention::
+
+    Receiving data via MQTT will work only for Python 2.7 and above
+    due to limited suport in ``paho-mqtt`` for TLS in Python 2.6.
 
 Examples
 --------
