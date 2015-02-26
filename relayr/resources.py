@@ -401,7 +401,8 @@ class Device(object):
         """
         Sends a command to the device.
 
-        :param command: the command to be sent (containing three key strings: 'path', 'command' and 'value')
+        :param command: the command to be sent (containing three key strings:
+            'path', 'command' and 'value')
         :type command: dict
         """
         
@@ -436,7 +437,7 @@ class Device(object):
         :type bool: boolean
         :type command: self
         """
-        self.send_command('led', {'cmd': int(bool)})
+        res = self.client.api.post_device_command_led(self.id, {'cmd': int(bool)})
         return self
 
     # new methods for transport channels
