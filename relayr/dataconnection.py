@@ -10,7 +10,9 @@ import ssl
 import time
 import threading
 import platform
+from os.path import exists, join, expanduser, basename
 
+import requests
 from Pubnub import Pubnub
 import paho.mqtt.client as mqtt
 
@@ -115,6 +117,21 @@ class MqttStream(threading.Thread):
             for credentials in self.credentials_list]
         self.setDaemon(True)
 
+    def _fetch_certificate(self):
+        """
+        Fetch certificate for accessing MQTT server and cache it.
+        """
+        folder = config.RELAYR_FOLDER
+        cert_url = config.MQTT_CERT_URL
+        cert_filename = basename(cert_url)
+        if not exists(expanduser(folder)):
+            os.makedirs(expanduser(folder))
+        if not exists(join(expanduser(folder), cert_filename)):
+            resp = requests.get(cert_url)
+            if resp.status_code == 200:
+                cert = resp.content
+                open(join(expanduser(folder), cert_filename), 'w').write(cert)
+
     def run(self):
         """
         Thread method, called implicitly after starting the thread.
@@ -130,10 +147,21 @@ class MqttStream(threading.Thread):
 
         # only encryption, no authentication
         c.tls_insecure_set(True)
-        null_file = '/dev/null' if platform.system() != 'Windows' else 'nul'
-        c.tls_set(ca_certs=null_file, cert_reqs=ssl.CERT_NONE)
+        # null_file = '/dev/null' if platform.system() != 'Windows' else 'nul'
+        folder = config.RELAYR_FOLDER
+        cert_url = config.MQTT_CERT_URL
+        cert_filename = basename(cert_url)
+        if not exists(join(expanduser(folder), cert_filename)):
+            self._fetch_certificate()
+        cert_path = join(expanduser(folder), cert_filename)
+        c.tls_set(ca_certs=cert_path)
 
-        c.connect('mqtt.relayr.io', port=8883, keepalive=60)
+        try:
+            c.connect('mqtt.relayr.io', port=8883, keepalive=60)
+        except: # invalid cert?
+            self._fetch_certificate()
+            c.connect('mqtt.relayr.io', port=8883, keepalive=60)
+
         try:
             c.loop_forever()
         except KeyboardInterrupt:
@@ -148,14 +176,18 @@ class MqttStream(threading.Thread):
         """
         if not self._stop_event.is_set():
             for t in self.topics:
-                self.client.unsubscribe(t.encode('utf-8'))
+                if PY2:
+                    t = t.encode('utf-8')
+                self.client.unsubscribe(t)
         self._stop_event.set()
         self.client.disconnect()
 
     def on_connect(self, client, userdata, flags, rc):
         if not self._stop_event.is_set():
             for t in self.topics:
-                self.client.subscribe(t.encode('utf-8'))
+                if PY2:
+                    t = t.encode('utf-8')
+                self.client.subscribe(t)
 
     def on_disconnect(self, client, userdata, rc):
         pass
@@ -178,7 +210,9 @@ class MqttStream(threading.Thread):
         topic = creds['credentials']['topic']
         self.topics.append(topic)
         # subscribe topic
-        self.client.subscribe(topic.encode('utf-8'))
+        if PY2:
+           topic = topic.encode('utf-8')
+        self.client.subscribe(topic)
 
     def remove_device(self, device):
         "Remove a specific device from the MQTT connection to no longer receive data from."
@@ -191,7 +225,9 @@ class MqttStream(threading.Thread):
         topic = creds['credentials']['topic']
         self.topics.remove(topic)
         # unsubscribe topic
-        self.client.unsubscribe(topic.encode('utf-8'))
+        if PY2:
+           topic = topic.encode('utf-8')
+        self.client.unsubscribe(topic)
 
 
 if config.dataConnectionHubName == 'PubNub':

@@ -23,13 +23,6 @@ help of Pip:
 
     pip install relayr
 
-.. attention::
-
-    There is a known SSL-related bug when accessing data via MQTT on Python 3.
-    We're working on it, please stay tuned! As a workaround, accessing data via
-    the old PubNub channels should still work, also in Python 3, see the mini
-    examples below.
-
 
 Examples
 --------
