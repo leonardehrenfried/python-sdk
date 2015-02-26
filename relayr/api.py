@@ -1223,6 +1223,20 @@ class Api(object):
         _, data = self.perform_request('POST', url, headers=self.headers)
         return data
 
+    def post_device_command_led(self, deviceID, data):
+        """
+        Send a command to a specific device's LED.
+
+        :param deviceID: the device's UUID
+        :type deviceID: string
+        :param data: the data to be sent, here {'cmd': true/false}
+        :type data: dict
+        :rtype: dict with connection credentials
+        """
+        # https://api.relayr.io/devices/<deviceID>/cmd/led
+        url = '{0}/devices/{1}/cmd/led'.format(self.host, deviceID)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
 
     def post_device_command(self, deviceID, command):
         """
