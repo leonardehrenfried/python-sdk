@@ -259,7 +259,7 @@ class TestClient(object):
         deviceID = fix_registered.testset1['deviceID']
         dev = Device(id=deviceID, client=c)
         dev.get_info()
-        dev.send_command('led', {'cmd': 1})
+        dev.switch_led_on(True)
         # Eye-ball test, since reading the LED status is not yet implemented
         # in the firmware.
 
