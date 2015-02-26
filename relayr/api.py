@@ -1234,7 +1234,7 @@ class Api(object):
         :type command: dict
         :rtype: dict with connection credentials
         """
-        # https://api.relayr.io/devices/<deviceID>/cmd/<command>
+        # https://api.relayr.io/devices/<deviceID>/cmd
         url = '{0}/devices/{1}/cmd'.format(self.host, deviceID)
         _, data = self.perform_request('POST', url, data=command, headers=self.headers)
         return data
