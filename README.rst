@@ -89,6 +89,11 @@ Documentation
 For references to the full documenation for the Python library please visit
 our Developer Dashboard `Python section`_!
 
+
+.. comment:
+    .. include:: CHANGELOG.txt
+
+
 .. _repository: https://github.com/relayr/python-sdk
 .. _API: https://developer.relayr.io/documents/relayrAPI/Introduction
 .. _Python Package Index: https://pypi.python.org/pypi/relayr/
