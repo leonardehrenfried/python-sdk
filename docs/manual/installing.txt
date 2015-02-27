@@ -70,9 +70,9 @@ this option below). Just download a tarball of the sources and unpack as follows
 
 .. code-block:: console
 
-    $ wget https://pypi.python.org/packages/source/r/relayr/relayr-0.2.3.tgz
-    $ tar xfz relayr-0.2.3.tgz
-    $ cd relayr-0.2.3
+    $ wget https://pypi.python.org/packages/source/r/relayr/relayr-0.2.4.tar.gz
+    $ tar xfz relayr-0.2.4.tar.gz
+    $ cd relayr-0.2.4
     $ python setup.py install
 
 
