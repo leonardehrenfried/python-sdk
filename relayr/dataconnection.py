@@ -10,6 +10,7 @@ import ssl
 import time
 import threading
 import platform
+import os
 from os.path import exists, join, expanduser, basename
 
 import requests
