@@ -17,6 +17,8 @@ import platform
 
 import pytest
 
+from relayr.compat import PY26
+
 
 class TestPubNub(object):
     "Test accessing device data via a PubNub connection."
@@ -76,6 +78,7 @@ class TestMqttChannelCreds(object):
         assert channelId not in channelIds
 
 
+@pytest.mark.skipif(PY26==True, reason="Python 2.7 is the minimum supported version for TLS.")
 class TestMqttStreamsShort(object):
     "Test accessing device data via a single topic MQTT stream."
 
