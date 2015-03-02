@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Example script using the Wunderbar over the Relayr cloud.
+Example script accessing data from a WunderBar microphone via MQTT.
 
 This will connect to a microphone, read its noise level and send
 an email notification to some receiver if that noise level exceeds
@@ -17,6 +17,8 @@ import smtplib
 from email.mime.text import MIMEText
 
 from relayr import Client
+from relayr.resources import Device
+from relayr.dataconnection import MqttStream
 
 
 # Replace with your own values!
@@ -62,13 +64,11 @@ class Callbacks(object):
         s.quit()
         print("Email notification sent to '%s'" % RECEIVER)
 
-    def microphone(self, message, channel):
+    def microphone(self, topic, message):
         "Callback displaying incoming noise level data and email if desired."
 
-        # Needs workaround handling a Pubnub strangeness on Python 3...
-        # not added here for brevity (see relayr/utils/workarounds.py).
-        level = json.loads(message)['snd_level'] 
-
+        readings = json.loads(message)['readings']
+        level = [r for r in readings if r['meaning']=='noiseLevel'][0]['value']
         print(level)
         threshold = 75
         if level > threshold:
@@ -83,18 +83,16 @@ def connect():
     "Connect to a device and read data for some time."
 
     c = Client(token=ACCESS_TOKEN)
-    m = c.get_device(id=MICROPHONE_ID).get_info()
-    cb = Callbacks(m)
-    user = c.get_user()
-    app = c.get_app()
-    conn = user.connect_device(app, m, cb.microphone)
-    conn.start()
-    print("Monitoring '%s' (%s) for 60 seconds..." % (m.name, m.id))
+    mic = Device(id=MICROPHONE_ID, client=c).get_info()
+    callbacks = Callbacks(mic)
+    print("Monitoring '%s' (%s) for 60 seconds..." % (mic.name, mic.id))
+    stream = MqttStream(callbacks.microphone, [mic], transport='mqtt')
+    stream.start()
     try:
         time.sleep(60)
     except KeyboardInterrupt:
         print('')
-    conn.stop()
+    stream.stop()
     print("Stopped")
 
 
