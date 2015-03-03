@@ -1073,7 +1073,7 @@ class Api(object):
     def delete_channel_id(self, channelID):
         """
         Delete an existing specific channel.
-        
+
         :param channelID: the UUID of the channel
         :type channelID: string
         :rtype: None
@@ -1087,7 +1087,7 @@ class Api(object):
     def delete_channels_device_transport(self, deviceID=None, transport=None):
         """
         Delete all existing channels for the given device ID and/or transport.
-        
+
         :param deviceID: the device UUID
         :type deviceID: string
         :param transport: transport for channel (mqtt, websockets, etc.)
@@ -1102,7 +1102,7 @@ class Api(object):
             data['transport'] = transport
         _, res = self.perform_request('DELETE', url,
                                       data=data, headers=self.headers)
-            
+
     def get_device_channels(self, deviceID):
         """
         Get all existing channels for a specific device.
@@ -1295,7 +1295,7 @@ class Api(object):
         :type appID: string
         """
         # {{relayrAPI}}/devices/{{deviceID}}/apps/{{appID}}
-        url = '{0}/devices/{1}/apps/{2}'.format(self.host, appID, deviceID)
+        url = '{0}/devices/{1}/apps/{2}'.format(self.host, deviceID, appID)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
