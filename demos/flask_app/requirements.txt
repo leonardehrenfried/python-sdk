@@ -1,0 +1,4 @@
+flask
+six
+git+git://github.com/peterhudec/authomatic.git
+relayr

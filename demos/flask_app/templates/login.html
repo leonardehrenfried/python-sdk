@@ -1,0 +1,46 @@
+{# index.html #}
+{% extends "base.html" %}
+
+{% block body %}
+
+    <a href="/">Home</a>
+    
+    {# Check for errors. #}
+    {% if result.error %}
+        <h2>Houston we have an error: {{ result.error.message }}</h2>
+    {% endif %}
+    
+    {# Welcome the user. #}
+    {% if result.user %}
+        <h1>Hi {{ result.user.name }}</h1>
+        <h2>Your id is: {{ result.user.id }}</h2>
+        <h2>Your email is: {{ result.user.email }}</h2>
+        <p>Your credentials token: {{ result.user.credentials.token }}</p>
+    {% endif %}
+    
+    {# If the user has credentials, we can access his/her protected resources. #}
+    {% if result.user.credentials %}
+        
+        {# Do the same for Relayr. #}
+        {% if result.provider.name == 'rl' %}
+            <h2>Your transmitters:</h2>
+            <ul>
+	    <!-- 
+            {% for tx in result.user.transmitters %}
+                <li> {{ tx.name }} </li>
+            {% endfor %}
+	    -->
+            {% for tx_name in result.user.transmitters_devices %}
+                <li> {{ tx_name }} </li>
+		<ul>
+                {% for dev in result.user.transmitters_devices[tx_name] %}
+                    <li> {{ dev.id }}, {{ dev.name }} </li>
+                {% endfor %}
+		</ul>
+            {% endfor %}
+            </ul>
+        {% endif %}{# result.provider.name == 'rl' #}
+
+    {% endif %}{# result.user.credentials #}
+
+{% endblock body %}
