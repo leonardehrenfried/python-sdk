@@ -3,7 +3,7 @@
 """
 This module contains abstractions for relayr API resources.
 
-Resources may be entities such as users, publishers, applications, 
+Resources may be entities such as users, publishers, applications,
 devices, device models and transmitters.
 """
 
@@ -82,9 +82,9 @@ class User(object):
     def register_wunderbar(self):
         """
         Returns registered Wunderbar devices (master and sensor modules).
-    
+
         :rtype: A generator over the registered devices and one transmitter.
-        """    
+        """
         res = self.client.api.post_user_wunderbar(self.id)
         for k, v in res.items():
             if 'model' in v:
@@ -144,9 +144,9 @@ class Publisher(object):
         """
         Get list of apps for this publisher.
 
-        If the optional parameter ``extended`` is ``False`` (default) the 
-        response will contain only the fields ``id``, ``name`` and 
-        ``description``. If it is ``True`` it will contain additional 
+        If the optional parameter ``extended`` is ``False`` (default) the
+        response will contain only the fields ``id``, ``name`` and
+        ``description``. If it is ``True`` it will contain additional
         fields: ``publisher``, ``clientId``, ``clientSecret`` and
         ``redirectUri``.
 
@@ -168,7 +168,7 @@ class Publisher(object):
     def update(self, name=None):
         """
         Updates certain information fields of the publisher's.
-        
+
         :param name: the user email to be set
         :type name: string
         """
@@ -198,12 +198,12 @@ class Publisher(object):
 class App(object):
     """
     A relayr application.
-    
+
     An application has a few attributes, which can be updated. It can be
-    registered to and deleted from the relayr platform. it can be connected 
+    registered to and deleted from the relayr platform. it can be connected
     to and disconnected from devices.
     """
-    
+
     def __init__(self, id=None, client=None):
         self.id = id
         self.client = client
@@ -214,13 +214,13 @@ class App(object):
     def get_info(self, extended=False):
         """
         Get application info.
-        
-        If the optional parameter ``extended`` is ``False`` (default) the 
-        result will contain only the fields ``id``, ``name`` and 
-        ``description``. If it is ``True`` it will contain additional 
+
+        If the optional parameter ``extended`` is ``False`` (default) the
+        result will contain only the fields ``id``, ``name`` and
+        ``description``. If it is ``True`` it will contain additional
         fields: ``publisher``, ``clientId``, ``clientSecret`` and
         ``redirectUri``.
-        
+
         :param extended: flag indicating if the info should be extended
         :type extended: booloean
         :rtype: A dict with certain fields.
@@ -237,7 +237,7 @@ class App(object):
     def update(self, description=None, name=None, redirectUri=None):
         """
         Updates certain fields in the application's description.
-        
+
         :param description: the user name to be set
         :type description: string
         :param name: the user email to be set
@@ -271,7 +271,7 @@ class App(object):
     def connect_to_device(self, device):
         """
         Connects the app to a device.
-        
+
         Data reception credentials are returned as part of the response.
 
         See also the Device.connect_to_device() method...
@@ -324,7 +324,7 @@ class Device(object):
     def update(self, description=None, name=None, modelID=None, public=None):
         """
         Updates certain fields in the device information.
-        
+
         :param description: the description to be set
         :type description: string
         :param name: the user name to be set
@@ -345,7 +345,7 @@ class Device(object):
     def get_connected_apps(self):
         """
         Retrieves all apps connected to the device.
-        
+
         :rtype: A list of apps.
         """
         for app_json in self.client.api.get_device_apps(self.id):
@@ -356,7 +356,7 @@ class Device(object):
     def connect_to_app(self, app):
         """
         Connects the device to an app.
-        
+
         Data reception credentials are returned as part of the response.
 
         See also the App.connect_to_device() method...
@@ -405,13 +405,13 @@ class Device(object):
             'path', 'command' and 'value')
         :type command: dict
         """
-        
+
         res = self.client.api.post_device_command(self.id, command)
         return res
 
     def send_data(self, data):
         """
-        Sends a data pacakge to the device.
+        Sends a data package to the device.
 
         :param data: the data to be sent
         :type data: dict
@@ -425,7 +425,7 @@ class Device(object):
 
         :type command: self
         """
-        
+
         res = self.client.api.delete_device(self.id)
         return self
 
@@ -465,7 +465,7 @@ class DeviceModel(object):
     """
     relayr device model.
     """
-    
+
     def __init__(self, id=None, client=None):
         self.id = id
         self.client = client
@@ -476,7 +476,7 @@ class DeviceModel(object):
     def get_info(self):
         """
         Returns device model info and stores it as instance attributes.
-        
+
         :rtype: self.
         """
         res = self.client.api.get_device_model(self.id)
@@ -487,7 +487,7 @@ class DeviceModel(object):
 
 class Transmitter(object):
     "A relayr transmitter, The Master Module, for example."
-    
+
     def __init__(self, id=None, client=None):
         self.id = id
         self.client = client
@@ -511,7 +511,7 @@ class Transmitter(object):
 
         :type command: self
         """
-        
+
         res = self.client.api.delete_transmitter(self.id)
         return self
 
@@ -527,7 +527,7 @@ class Transmitter(object):
     def get_connected_devices(self):
         """
         Returns a list of devices connected to the specific transmitter.
-        
+
         :rtype: A list of devices.
         """
         res = self.client.api.get_transmitter_devices(self.id)
